@@ -161,7 +161,7 @@ export default function App() {
               noWrap
               className={classes.title}
             >
-              Covid Graph Search
+              Covid Graph React Client
             </Typography>
           </Toolbar>
         </AppBar>
