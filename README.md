@@ -27,7 +27,7 @@ REACT_APP_GRAPHQL_URI=https://graphql-api.covidgraph.vercel.app/graphql npm run 
 ### Type generation
 
 The GraphQL entities are mapped to Typescript via an auto generated deceleration 
-[file](/src/generated/graphql.tsx).
+[file](/src/generated/graphql.tsx) (from [GraphQL Code Generator](https://graphql-code-generator.com/)).
 
 To recreate the deceleration file, ensure you have the correct GraphQL endpoint set in the 
 [codegen.yml file](codegen.yml) and run:
