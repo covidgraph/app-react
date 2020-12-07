@@ -11,7 +11,7 @@ It was originally generated as a Typescript & React frontend in [GRANDstack.io](
 
 ## Deployment
 
-The main branch is deployment is available at [https://covid-graph-react-client.netlify.app/](https://covid-graph-react-client.netlify.app/)
+The main branch deployment is available at [https://covid-graph-react-client.netlify.app/](https://covid-graph-react-client.netlify.app/)
 
 ## Development
 
