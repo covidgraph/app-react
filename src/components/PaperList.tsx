@@ -4,12 +4,9 @@ import {
   Table,
   TableBody,
   TableCell,
-  SortDirection,
   TableHead,
   TableRow,
-  Tooltip,
   Paper as PaperUi,
-  TableSortLabel,
   TextField,
 } from '@material-ui/core'
 import { useQuery, gql } from '@apollo/client';
@@ -56,8 +53,8 @@ const GET_PAPERS = gql`
 
 function GeneList(props: any) {
   const { classes } = props
-  const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
-  const [orderBy, setOrderBy] = React.useState('_hash_id')
+  const [order] = React.useState<'asc' | 'desc'>('asc')
+  const [orderBy] = React.useState('_hash_id')
   const [page] = React.useState(0)
   const [rowsPerPage] = React.useState(10)
   const [filterState, setFilterState] = React.useState({ searchTermFilter: '' })
@@ -82,17 +79,17 @@ function GeneList(props: any) {
     },
   })
 
-  const handleSortRequest = (property: any) => {
-    const newOrderBy = property
-    let newOrder: SortDirection = 'desc'
+  // const handleSortRequest = (property: any) => {
+  //   const newOrderBy = property
+  //   let newOrder: SortDirection = 'desc'
 
-    if (orderBy === property && order === 'desc') {
-      newOrder = 'asc'
-    }
+  //   if (orderBy === property && order === 'desc') {
+  //     newOrder = 'asc'
+  //   }
 
-    setOrder(newOrder)
-    setOrderBy(newOrderBy)
-  }
+  //   setOrder(newOrder)
+  //   setOrderBy(newOrderBy)
+  // }
 
   const handleFilterChange = (filterName: any) => (event: any) => {
     const val = event.target.value
