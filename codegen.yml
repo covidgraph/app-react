@@ -1,0 +1,6 @@
+overwrite: true
+schema: "https://graphql-api.covidgraph.vercel.app/"
+generates:
+  src/generated/graphql.tsx:
+    plugins:
+      - "typescript"

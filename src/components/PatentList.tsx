@@ -15,13 +15,12 @@ import {
 import { useQuery, gql } from '@apollo/client'
 
 import Title from './Title'
+
 import {
+  Maybe,
   Patent,
-  PatentTitle,
-  PatentAbstract,
-  Fragment,
-  GeneSymbol,
-} from '../types'
+  _PatentTitles
+} from '../generated/graphql'
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -50,18 +49,12 @@ const GET_PATENT = gql`
   ) {
     Patent(first: $first, offset: $offset, orderBy: $orderBy, filter: $filter) {
       lens_id
-      patentTitle {
-        text
-        lang
-        fromPatentTitle {
-          mentions {
-            sid
-          }
+      titles{
+        _id,
+        title{
+          lang,
+          text
         }
-      }
-      patentAbstract {
-        text
-        lang
       }
     }
   }
@@ -94,30 +87,13 @@ function PatentList(props: any) {
     if (filterState.searchTermFilter.length > 0) {
       return {
         OR: [
-          { patentTitle_some: { text_contains: filterState.searchTermFilter } },
-          {
-            patentAbstract_some: {
-              text_contains: filterState.searchTermFilter,
-            },
-          },
-          {
-            patentTitle_some: {
-              fromPatentTitle_some: {
-                mentions_some: {
-                  sid_contains: filterState.searchTermFilter,
-                },
-              },
-            },
-          },
-          {
-            patentAbstract_some: {
-              fromPatentAbstract_some: {
-                mentions_some: {
-                  sid_contains: filterState.searchTermFilter,
-                },
-              },
-            },
-          },
+          { 
+            titles_some: {
+              title: {
+                text_contains: filterState.searchTermFilter
+              }
+            }
+          }
         ],
       }
     }
@@ -154,18 +130,18 @@ function PatentList(props: any) {
     }))
   }
 
-  const distinctGeneSymbols = (patentTitle: PatentTitle[]): GeneSymbol[] => {
-    const geneSymbols = new Map<string, GeneSymbol>()
-    patentTitle.forEach((title: PatentTitle) => {
-      title.fromPatentTitle.forEach((fragment: Fragment) => {
-        fragment.mentions.forEach((geneSymbol: GeneSymbol) => {
-          geneSymbols.set(geneSymbol.sid, geneSymbol)
-        })
-      })
-    })
+  // const distinctGeneSymbols = (patentTitle: PatentTitle[]): GeneSymbol[] => {
+  //   const geneSymbols = new Map<string, GeneSymbol>()
+  //   patentTitle.forEach((title: PatentTitle) => {
+  //     title.fromPatentTitle.forEach((fragment: Fragment) => {
+  //       fragment.mentions.forEach((geneSymbol: GeneSymbol) => {
+  //         geneSymbols.set(geneSymbol.sid, geneSymbol)
+  //       })
+  //     })
+  //   })
 
-    return Array.from(geneSymbols.values())
-  }
+  //   return Array.from(geneSymbols.values())
+  // }
 
   return (
     <Paper className={classes.root}>
@@ -210,15 +186,9 @@ function PatentList(props: any) {
               >
                 <div>Title</div>
               </TableCell>
-              <TableCell
-                key="abstract"
-                sortDirection={orderBy === 'lang' ? order : false}
-              >
-                <div>Abstract</div>
-              </TableCell>
-              <TableCell key="gene_symbols">
+              {/* <TableCell key="gene_symbols">
                 <div>Gene Symbols</div>
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -229,30 +199,19 @@ function PatentList(props: any) {
                     {n.lens_id}
                   </TableCell>
                   <TableCell>
-                    {n.patentTitle.map((title: PatentTitle, i: number) => {
+                    {n.titles?.map((patentTitles: Maybe<_PatentTitles>) => {
                       return (
-                        <div key={i}>
-                          {title.lang}: {title.text}
+                        <div key={patentTitles?._id}>
+                          {patentTitles?.title?.lang}: {patentTitles?.title?.text}
                         </div>
                       )
                     })}
                   </TableCell>
-                  <TableCell>
-                    {n.patentAbstract.map(
-                      (title: PatentAbstract, i: number) => {
-                        return (
-                          <div key={i}>
-                            {title.lang}: {title.text}
-                          </div>
-                        )
-                      }
-                    )}
-                  </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {distinctGeneSymbols(n.patentTitle).map((geneSymbol) => {
                       return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
                     })}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               )
             })}

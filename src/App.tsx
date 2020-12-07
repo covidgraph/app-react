@@ -188,7 +188,7 @@ export default function App() {
               </ListItem>
             </Link>
 
-            <Link to="/genes" className={classes.navLink}>
+            {/* <Link to="/genes" className={classes.navLink}>
               <ListItem button>
                 <ListItemIcon>
                   <FindInPageIcon />
@@ -204,7 +204,7 @@ export default function App() {
                 </ListItemIcon>
                 <ListItemText primary="Papers" />
               </ListItem>
-            </Link>
+            </Link> */}
           </List>
           <Divider />
         </Drawer>
