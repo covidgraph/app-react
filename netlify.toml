@@ -1,2 +1,8 @@
 [context.production.environment]
     REACT_APP_GRAPHQL_URI = "https://graphql-api.covidgraph.vercel.app/graphql"
+
+[context.deploy-preview.environment]
+    REACT_APP_GRAPHQL_URI = "https://graphql-api.covidgraph.vercel.app/graphql"
+
+[context.branch-deploy.environment]
+    REACT_APP_GRAPHQL_URI = "https://graphql-api.covidgraph.vercel.app/graphql"
