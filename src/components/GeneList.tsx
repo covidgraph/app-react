@@ -6,15 +6,18 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  // Tooltip,
   Paper,
-  // TableSortLabel,
   TextField,
+  Tooltip
 } from '@material-ui/core'
 import { useQuery, gql } from '@apollo/client'
 
 import Title from './Title'
-import { Gene } from '../types'
+import { 
+  Maybe,
+  Gene,
+  _GeneMapsGeneSymbols
+} from '../generated/graphql'
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -38,16 +41,43 @@ const GET_GENES = gql`
   query genePaginateQuery(
     $first: Int
     $offset: Int
-    $orderBy: [_GeneSymbolOrdering]
-    $filter: _GeneSymbolFilter
+    $orderBy: [_GeneOrdering]
+    $filter: _GeneFilter
   ) {
-    GeneSymbol(
+    Gene(
       first: $first
       offset: $offset
       orderBy: $orderBy
       filter: $filter
     ) {
-      sid
+      sid,
+      Feature_type,
+      Full_name_from_nomenclature_authority,
+      GeneID,
+      LocusTag,
+      Modification_date,
+      Nomenclature_status,
+      Other_designations,
+      Symbol,
+      Symbol_from_nomenclature_authority,
+      Synonyms,
+      chromosome,
+      dbXrefs,
+      description,
+      map_location,
+      name,
+      source,
+      tax_id,
+      taxid,
+      type_of_gene,
+      mapsGeneSymbols{
+        source,
+        symbol{
+          sid,
+          status,
+          taxid
+        }
+      }
     }
   }
 `
@@ -63,7 +93,17 @@ function GeneList(props: any) {
   const getFilter = () => {
     if (filterState.searchTermFilter.length > 0) {
     }
-    return {}
+    return {
+      OR: [
+        {Full_name_from_nomenclature_authority_contains: filterState.searchTermFilter},
+        {name_contains: filterState.searchTermFilter},
+        {mapsGeneSymbols_some: {
+          symbol: {
+            sid_contains: "ACE2"
+          }
+        }}
+      ],
+    }
   }
 
   const { loading, data, error } = useQuery(GET_GENES, {
@@ -118,29 +158,58 @@ function GeneList(props: any) {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell
-                key="sid"
-                sortDirection={orderBy === 'sid' ? order : false}
-              >
-                <div>SID</div>
-              </TableCell>
-              <TableCell>
-                <div>Symbol</div>
-              </TableCell>
-              <TableCell>
-                <div>Linked Symbols</div>
-              </TableCell>
+              <TableCell>Gene Symbols</TableCell>
+              <TableCell>SID</TableCell>
+              <TableCell>Feature_type</TableCell>
+              <TableCell>Full_name_from_nomenclature_authority</TableCell>
+              <TableCell>GeneID</TableCell>
+              <TableCell>LocusTag</TableCell>
+              <TableCell>Modification_date</TableCell>
+              <TableCell>Nomenclature_status</TableCell>
+              <TableCell>Other_designations</TableCell>
+              <TableCell>Symbol</TableCell>
+              <TableCell>Symbol_from_nomenclature_authority</TableCell>
+              <TableCell>Synonyms</TableCell>
+              <TableCell>chromosome</TableCell>
+              <TableCell>dbXrefs</TableCell>
+              <TableCell>description</TableCell>
+              <TableCell>map_location</TableCell>
+              <TableCell>name</TableCell>
+              <TableCell>source</TableCell>
+              <TableCell>tax_id</TableCell>
+              <TableCell>taxid</TableCell>
+              <TableCell>type_of_gene</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.GeneSymbol.map((n: Gene) => {
+            {data.Gene.map((n: Gene) => {
               return (
                 <TableRow key={n.sid}>
-                  <TableCell component="th" scope="row">
-                    {n.sid}
-                  </TableCell>
-                  <TableCell component="th" scope="row"></TableCell>
-                  <TableCell component="th" scope="row"></TableCell>
+                  <TableCell>{n.mapsGeneSymbols?.map((geneMapsGeneSymbols: Maybe<_GeneMapsGeneSymbols>) => {
+                    return <Tooltip title={geneMapsGeneSymbols?.symbol?.status + " from " + geneMapsGeneSymbols?.source}>
+                      <div>{geneMapsGeneSymbols?.symbol?.sid}</div>
+                    </Tooltip>
+                  })}</TableCell>
+                  <TableCell>{n.sid}</TableCell>
+                  <TableCell>{n.Feature_type}</TableCell>
+                  <TableCell>{n.Full_name_from_nomenclature_authority}</TableCell>
+                  <TableCell>{n.GeneID}</TableCell>
+                  <TableCell>{n.LocusTag}</TableCell>
+                  <TableCell>{n.Modification_date}</TableCell>
+                  <TableCell>{n.Nomenclature_status}</TableCell>
+                  <TableCell>{n.Other_designations}</TableCell>
+                  <TableCell>{n.Symbol}</TableCell>
+                  <TableCell>{n.Symbol_from_nomenclature_authority}</TableCell>
+                  <TableCell>{n.Synonyms}</TableCell>
+                  <TableCell>{n.chromosome}</TableCell>
+                  <TableCell>{n.dbXrefs}</TableCell>
+                  <TableCell>{n.description}</TableCell>
+                  <TableCell>{n.map_location}</TableCell>
+                  <TableCell>{n.name}</TableCell>
+                  <TableCell>{n.source}</TableCell>
+                  <TableCell>{n.tax_id}</TableCell>
+                  <TableCell>{n.taxid}</TableCell>
+                  <TableCell>{n.type_of_gene}</TableCell>
                 </TableRow>
               )
             })}
