@@ -8,11 +8,16 @@ import {
   TableRow,
   Paper,
   TextField,
+  Tooltip
 } from '@material-ui/core'
 import { useQuery, gql } from '@apollo/client'
 
 import Title from './Title'
-import { Gene } from '../generated/graphql'
+import { 
+  Maybe,
+  Gene,
+  _GeneMapsGeneSymbols
+} from '../generated/graphql'
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -64,7 +69,15 @@ const GET_GENES = gql`
       source,
       tax_id,
       taxid,
-      type_of_gene
+      type_of_gene,
+      mapsGeneSymbols{
+        source,
+        symbol{
+          sid,
+          status,
+          taxid
+        }
+      }
     }
   }
 `
@@ -82,9 +95,13 @@ function GeneList(props: any) {
     }
     return {
       OR: [
-        {
-          Full_name_from_nomenclature_authority_contains: filterState.searchTermFilter
-        }
+        {Full_name_from_nomenclature_authority_contains: filterState.searchTermFilter},
+        {name_contains: filterState.searchTermFilter},
+        {mapsGeneSymbols_some: {
+          symbol: {
+            sid_contains: "ACE2"
+          }
+        }}
       ],
     }
   }
@@ -141,6 +158,7 @@ function GeneList(props: any) {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
+              <TableCell>Gene Symbols</TableCell>
               <TableCell>SID</TableCell>
               <TableCell>Feature_type</TableCell>
               <TableCell>Full_name_from_nomenclature_authority</TableCell>
@@ -167,6 +185,11 @@ function GeneList(props: any) {
             {data.Gene.map((n: Gene) => {
               return (
                 <TableRow key={n.sid}>
+                  <TableCell>{n.mapsGeneSymbols?.map((geneMapsGeneSymbols: Maybe<_GeneMapsGeneSymbols>) => {
+                    return <Tooltip title={geneMapsGeneSymbols?.symbol?.status + " from " + geneMapsGeneSymbols?.source}>
+                      <div>{geneMapsGeneSymbols?.symbol?.sid}</div>
+                    </Tooltip>
+                  })}</TableCell>
                   <TableCell>{n.sid}</TableCell>
                   <TableCell>{n.Feature_type}</TableCell>
                   <TableCell>{n.Full_name_from_nomenclature_authority}</TableCell>
