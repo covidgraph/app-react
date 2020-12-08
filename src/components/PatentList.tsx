@@ -16,7 +16,10 @@ import Title from './Title'
 import {
   Maybe,
   Patent,
-  _PatentTitles
+  _PatentTitles,
+  GeneSymbol,
+  FromPatentTitle,
+  _FromPatentTitleGeneSymbols
 } from '../generated/graphql'
 
 const styles = (theme: Theme) =>
@@ -56,27 +59,23 @@ const GET_PATENT = gql`
         _id,
         title{
           lang,
-          text
+          text,
+          fragments{
+            text,
+            kind,
+            sequence,
+            geneSymbols{
+              score,
+              symbol{
+                sid
+              }
+            }
+          }
         }
       }
     }
   }
 `
-// name
-// patentTitle{
-//   text
-//   lang
-// fragments{
-//   _hash_id
-//   mentions{
-//     sid
-//   }
-// }
-// }
-// patentAbstract{
-//   text
-//   lang
-// }
 
 function PatentList(props: any) {
   const { classes } = props
@@ -94,6 +93,19 @@ function PatentList(props: any) {
             titles_some: {
               title: {
                 text_contains: filterState.searchTermFilter
+              }
+            }
+          },
+          { 
+            titles_some: {
+              title: {
+                fragments_some: {
+                  geneSymbols_some: {
+                    symbol: {
+                      sid_contains: filterState.searchTermFilter
+                    }
+                  }
+                }
               }
             }
           }
@@ -133,18 +145,20 @@ function PatentList(props: any) {
     }))
   }
 
-  // const distinctGeneSymbols = (patentTitle: PatentTitle[]): GeneSymbol[] => {
-  //   const geneSymbols = new Map<string, GeneSymbol>()
-  //   patentTitle.forEach((title: PatentTitle) => {
-  //     title.fromPatentTitle.forEach((fragment: Fragment) => {
-  //       fragment.mentions.forEach((geneSymbol: GeneSymbol) => {
-  //         geneSymbols.set(geneSymbol.sid, geneSymbol)
-  //       })
-  //     })
-  //   })
+  const distinctGeneSymbols = (patentTitles: Maybe<_PatentTitles>[]): GeneSymbol[] => {
+    const geneSymbols = new Map<string, GeneSymbol>()
+    
+    patentTitles.forEach((title: Maybe<_PatentTitles>) => {
+      title?.title?.fragments?.forEach((fragment: Maybe<FromPatentTitle>) => {
+        fragment?.geneSymbols?.forEach((fromPatentTitleGeneSymbols: Maybe<_FromPatentTitleGeneSymbols>) => {
+          if(fromPatentTitleGeneSymbols && fromPatentTitleGeneSymbols.symbol)
+            geneSymbols.set(fromPatentTitleGeneSymbols.symbol?._id || "", fromPatentTitleGeneSymbols.symbol)
+        })
+      })
+    })
 
-  //   return Array.from(geneSymbols.values())
-  // }
+    return Array.from(geneSymbols.values())
+  }
 
   return (
     <Paper className={classes.root}>
@@ -168,6 +182,7 @@ function PatentList(props: any) {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
+              <TableCell>Gene Symbols</TableCell>
               <TableCell>Lens ID</TableCell>
               <TableCell>Lens URL</TableCell>
               <TableCell>Filing Key</TableCell>
@@ -177,15 +192,17 @@ function PatentList(props: any) {
               <TableCell>Pub Key</TableCell>
               <TableCell>Type</TableCell>
               <TableCell>Title</TableCell>
-              {/* <TableCell key="gene_symbols">
-                <div>Gene Symbols</div>
-              </TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
             {data.Patent.map((n: Patent) => {
               return (
                 <TableRow key={n.lens_id}>
+                  <TableCell>
+                    {n.titles ? distinctGeneSymbols(n.titles).map((geneSymbol) => {
+                      return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
+                    }) : "n/a"}
+                  </TableCell>
                   <TableCell>{n.lens_id}</TableCell>
                   <TableCell>{n.lens_url}</TableCell>
                   <TableCell>{n.filing_key}</TableCell>
@@ -203,11 +220,6 @@ function PatentList(props: any) {
                       )
                     })}
                   </TableCell>
-                  {/* <TableCell>
-                    {distinctGeneSymbols(n.patentTitle).map((geneSymbol) => {
-                      return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
-                    })}
-                  </TableCell> */}
                 </TableRow>
               )
             })}
