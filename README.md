@@ -41,3 +41,9 @@ To recreate the deceleration file, ensure you have the correct GraphQL endpoint 
 ```shell 
 npx graphql-codegen
 ```
+
+## Project Management
+
+ZenHub is being used to manage the the tasks/GitHub issues, find the board [here](https://app.zenhub.com/workspaces/react-client-board-5fd22febbafb32001d17fe08/board). To enhance your ZenHub integration with GitHub we recommend installing the ZenHub browser extension.
+
+When adding an issue please associate the 'React Client' epic to the issue, so that all tasks across the Covid Graph project graph can be easily monitored.
