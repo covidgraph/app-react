@@ -108,7 +108,7 @@ function PatentList(props: any) {
   const [page] = React.useState(0)
   const [rowsPerPage] = React.useState(10)
   const [filterState, setFilterState] = React.useState({ searchTermFilter: '' })
-  const [currentDisplayInfo, setCurrentDisplayInfo] = React.useState('null');
+  const [currentDisplayInfo, setCurrentDisplayInfo] = React.useState("");
   const [open, setOpen] = React.useState(true)
 
   const getFilter = () => {
@@ -172,11 +172,11 @@ function PatentList(props: any) {
   }
 
   const handleClick = (patent: Patent) => {
-    if (currentDisplayInfo === 'null') {
+    if (!currentDisplayInfo) {
       setCurrentDisplayInfo(patent.lens_id)
       setOpen(false)
     } else if (currentDisplayInfo === patent.lens_id) {
-      setCurrentDisplayInfo('null')
+      setCurrentDisplayInfo("")
       setOpen(true)
     } else {
       setCurrentDisplayInfo(patent.lens_id)
