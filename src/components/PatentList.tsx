@@ -1,6 +1,7 @@
 import React from 'react'
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles'
 import {
+  TableContainer,
   Table,
   TableBody,
   TableCell,
@@ -8,9 +9,12 @@ import {
   TableRow,
   Paper,
   TextField,
+  Card,
+  CardContent,
+  Divider
 } from '@material-ui/core'
+import clsx from 'clsx'
 import { useQuery, gql } from '@apollo/client'
-
 import Title from './Title'
 
 import {
@@ -25,17 +29,37 @@ import {
 const styles = (theme: Theme) =>
   createStyles({
     root: {
+      maxWidth: '100%',
       marginTop: theme.spacing(3),
+      padding: theme.spacing(1),
       overflowX: 'auto',
       margin: 'auto',
     },
     table: {
-      minWidth: 700,
+      width: '60%',
+      display: 'inline-block',
+    },
+    tableOpen: {
+      width: '100%',
+      display: 'inline-block',
     },
     textField: {
-      marginLeft: theme.spacing(1),
+      float: 'left',
       marginRight: theme.spacing(1),
       minWidth: 300,
+    },
+    details: {
+      width: '29%',
+      display: 'inline-block',
+      paddingLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+      marginLeft: theme.spacing(1),
+      float: 'right',
+      position: 'absolute',
+    },
+    container: {
+      paddingTop: '80px',
+      width: '100%',
     },
   })
 
@@ -84,19 +108,21 @@ function PatentList(props: any) {
   const [page] = React.useState(0)
   const [rowsPerPage] = React.useState(10)
   const [filterState, setFilterState] = React.useState({ searchTermFilter: '' })
+  const [currentDisplayInfo, setCurrentDisplayInfo] = React.useState("");
+  const [open, setOpen] = React.useState(true)
 
   const getFilter = () => {
     if (filterState.searchTermFilter.length > 0) {
       return {
         OR: [
-          { 
+          {
             titles_some: {
               title: {
                 text_contains: filterState.searchTermFilter
               }
             }
           },
-          { 
+          {
             titles_some: {
               title: {
                 fragments_some: {
@@ -145,9 +171,65 @@ function PatentList(props: any) {
     }))
   }
 
+  const handleClick = (patent: Patent) => {
+    if (!currentDisplayInfo) {
+      setCurrentDisplayInfo(patent.lens_id)
+      setOpen(false)
+    } else if (currentDisplayInfo === patent.lens_id) {
+      setCurrentDisplayInfo("")
+      setOpen(true)
+    } else {
+      setCurrentDisplayInfo(patent.lens_id)
+    }
+  };
+
+  const MoreInformation = (patentId: any) => {
+    return (
+      <Card className={classes.details} variant="outlined">
+        <Title>Patent Details</Title>
+        <CardContent>
+            {data.Patent.filter((patent: Patent) => patent.lens_id === currentDisplayInfo).map((filteredPatent: Patent) => (
+              <div key={filteredPatent?.lens_id}>
+                {filteredPatent.titles ? distinctGeneSymbols(filteredPatent.titles).map((geneSymbol) => {
+                    return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
+                  }) : "n/a"}
+                  <Divider variant="fullWidth" />
+                  Lens ID: {filteredPatent.lens_id}
+                    <Divider variant="fullWidth" />
+                  Lens URL: {filteredPatent.lens_url}
+                  <Divider variant="fullWidth" />
+                  Filing Key: {filteredPatent.filing_key}
+                  <Divider variant="fullWidth" />
+                  Filing Date: {filteredPatent.filing_date}
+                  <Divider variant="fullWidth" />
+                  Jurisdiction: {filteredPatent.jurisdiction}
+                  <Divider variant="fullWidth" />
+                  Publication date: {filteredPatent.pub_date}
+                  <Divider variant="fullWidth" />
+                  Publication Key: {filteredPatent.pub_key}
+                  <Divider variant="fullWidth" />
+                  Type: {filteredPatent.type}
+                  <Divider variant="fullWidth" />
+                  Titles:
+                  <br/>
+                  {filteredPatent.titles?.map((patentTitles: Maybe<_PatentTitles>) => {
+                    return (
+                      <div key={patentTitles?._id}>
+                        {patentTitles?.title?.lang}: {patentTitles?.title?.text}
+                        <br/>
+                      </div>
+                    )
+                  })}
+              </div>
+            ))}
+        </CardContent>
+      </Card>
+    )
+  }
+
   const distinctGeneSymbols = (patentTitles: Maybe<_PatentTitles>[]): GeneSymbol[] => {
     const geneSymbols = new Map<string, GeneSymbol>()
-    
+
     patentTitles.forEach((title: Maybe<_PatentTitles>) => {
       title?.title?.fragments?.forEach((fragment: Maybe<FromPatentTitle>) => {
         fragment?.geneSymbols?.forEach((fromPatentTitleGeneSymbols: Maybe<_FromPatentTitleGeneSymbols>) => {
@@ -176,56 +258,63 @@ function PatentList(props: any) {
           className: classes.input,
         }}
       />
+      <div className={classes.container}>
       {loading && !error && <p>Loading...</p>}
       {error && !loading && <p>Error</p>}
       {data && !loading && !error && (
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Gene Symbols</TableCell>
-              <TableCell>Lens ID</TableCell>
-              <TableCell>Lens URL</TableCell>
-              <TableCell>Filing Key</TableCell>
-              <TableCell>Filing Date</TableCell>
-              <TableCell>Jurisdiction</TableCell>
-              <TableCell>Pub Date</TableCell>
-              <TableCell>Pub Key</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Title</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.Patent.map((n: Patent) => {
-              return (
-                <TableRow key={n.lens_id}>
-                  <TableCell>
-                    {n.titles ? distinctGeneSymbols(n.titles).map((geneSymbol) => {
-                      return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
-                    }) : "n/a"}
-                  </TableCell>
-                  <TableCell>{n.lens_id}</TableCell>
-                  <TableCell>{n.lens_url}</TableCell>
-                  <TableCell>{n.filing_key}</TableCell>
-                  <TableCell>{n.filing_date}</TableCell>
-                  <TableCell>{n.jurisdiction}</TableCell>
-                  <TableCell>{n.pub_date}</TableCell>
-                  <TableCell>{n.pub_key}</TableCell>
-                  <TableCell>{n.type}</TableCell>
-                  <TableCell>
-                    {n.titles?.map((patentTitles: Maybe<_PatentTitles>) => {
-                      return (
-                        <div key={patentTitles?._id}>
-                          {patentTitles?.title?.lang}: {patentTitles?.title?.text}
-                        </div>
-                      )
-                    })}
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
+        <TableContainer className={clsx(classes.table, open && classes.tableOpen)} component={Card}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Gene Symbols</TableCell>
+                <TableCell>Lens ID</TableCell>
+                <TableCell>Lens URL</TableCell>
+                <TableCell>Filing Key</TableCell>
+                <TableCell>Filing Date</TableCell>
+                <TableCell>Jurisdiction</TableCell>
+                <TableCell>Pub Date</TableCell>
+                <TableCell>Pub Key</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Title</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.Patent.map((n: Patent) => {
+                return (
+                  <TableRow key={n.lens_id} onClick={(event: any) => handleClick(n)}>
+                    <TableCell>
+                      {n.titles ? distinctGeneSymbols(n.titles).map((geneSymbol) => {
+                        return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
+                      }) : "n/a"}
+                    </TableCell>
+                    <TableCell>{n.lens_id}</TableCell>
+                    <TableCell>{n.lens_url}</TableCell>
+                    <TableCell>{n.filing_key}</TableCell>
+                    <TableCell>{n.filing_date}</TableCell>
+                    <TableCell>{n.jurisdiction}</TableCell>
+                    <TableCell>{n.pub_date}</TableCell>
+                    <TableCell>{n.pub_key}</TableCell>
+                    <TableCell>{n.type}</TableCell>
+                    <TableCell>
+                      {n.titles?.map((patentTitles: Maybe<_PatentTitles>) => {
+                        return (
+                          <div key={patentTitles?._id}>
+                            {patentTitles?.title?.lang}: {patentTitles?.title?.text}
+                          </div>
+                        )
+                      })}
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
+
+      {!open && MoreInformation(currentDisplayInfo)}
+
+      </div>
     </Paper>
   )
 }
