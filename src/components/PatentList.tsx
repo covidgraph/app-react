@@ -7,6 +7,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TablePagination,
   Paper,
   TextField,
   Card,
@@ -105,8 +106,8 @@ function PatentList(props: any) {
   const { classes } = props
   const [order] = React.useState<'asc' | 'desc'>('asc')
   const [orderBy] = React.useState('lens_id')
-  const [page] = React.useState(0)
-  const [rowsPerPage] = React.useState(10)
+  const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [filterState, setFilterState] = React.useState({ searchTermFilter: '' })
   const [currentDisplayInfo, setCurrentDisplayInfo] = React.useState("");
   const [open, setOpen] = React.useState(true)
@@ -164,6 +165,8 @@ function PatentList(props: any) {
 
   const handleFilterChange = (filterName: any) => (event: any) => {
     const val = event.target.value
+    setPage(0);
+    resetMoreInformation()
 
     setFilterState((oldFilterState) => ({
       ...oldFilterState,
@@ -171,19 +174,34 @@ function PatentList(props: any) {
     }))
   }
 
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+    resetMoreInformation()
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+    resetMoreInformation()
+  };
+
   const handleClick = (patent: Patent) => {
     if (!currentDisplayInfo) {
       setCurrentDisplayInfo(patent.lens_id)
       setOpen(false)
     } else if (currentDisplayInfo === patent.lens_id) {
-      setCurrentDisplayInfo("")
-      setOpen(true)
+      resetMoreInformation()
     } else {
       setCurrentDisplayInfo(patent.lens_id)
     }
   };
 
-  const MoreInformation = (patentId: any) => {
+  const resetMoreInformation = () => {
+    setCurrentDisplayInfo("")
+    setOpen(true)
+  }
+
+  const moreInformation = (patentId: any) => {
     return (
       <Card className={classes.details} variant="outlined">
         <Title>Patent Details</Title>
@@ -195,7 +213,7 @@ function PatentList(props: any) {
                   }) : "n/a"}
                   <Divider variant="fullWidth" />
                   Lens ID: {filteredPatent.lens_id}
-                    <Divider variant="fullWidth" />
+                  <Divider variant="fullWidth" />
                   Lens URL: {filteredPatent.lens_url}
                   <Divider variant="fullWidth" />
                   Filing Key: {filteredPatent.filing_key}
@@ -312,9 +330,18 @@ function PatentList(props: any) {
         </TableContainer>
       )}
 
-      {!open && MoreInformation(currentDisplayInfo)}
+      {!open && moreInformation(currentDisplayInfo)}
 
       </div>
+      <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={-1}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
     </Paper>
   )
 }
