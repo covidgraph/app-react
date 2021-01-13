@@ -113,6 +113,12 @@ function PatentList(props: any) {
   const [open, setOpen] = React.useState(true)
   const [urlQueryParams] = React.useState(new URLSearchParams(window.location.search))
 
+  React.useEffect(() => {
+    urlQueryParams.set("page", page.toString());
+    urlQueryParams.set("rowsPerPage", rowsPerPage.toString());
+    props.history.push(window.location.pathname + "?" + urlQueryParams.toString()); 
+  }, [urlQueryParams, page, rowsPerPage, props.history])
+
   const getFilter = () => {
     if (filterState.searchTermFilter.length > 0) {
       return {
@@ -163,10 +169,6 @@ function PatentList(props: any) {
   //   setOrder(newOrder)
   //   setOrderBy(newOrderBy)
   // }
-
-  React.useEffect(() => {
-    setUrLQueryParams(page, rowsPerPage)
-  }, [urlQueryParams])
 
   const setUrLQueryParams = (newPage: any, newRowsPerPage: any) => {
     urlQueryParams.set("page", newPage.toString());
