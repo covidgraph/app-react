@@ -111,6 +111,7 @@ function PatentList(props: any) {
   const [filterState, setFilterState] = React.useState({ searchTermFilter: '' })
   const [currentDisplayInfo, setCurrentDisplayInfo] = React.useState("");
   const [open, setOpen] = React.useState(true)
+  const [urlQueryParams] = React.useState(new URLSearchParams(window.location.search))
 
   const getFilter = () => {
     if (filterState.searchTermFilter.length > 0) {
@@ -163,10 +164,21 @@ function PatentList(props: any) {
   //   setOrderBy(newOrderBy)
   // }
 
+  React.useEffect(() => {
+    setUrLQueryParams(page, rowsPerPage)
+  }, [urlQueryParams])
+
+  const setUrLQueryParams = (newPage: any, newRowsPerPage: any) => {
+    urlQueryParams.set("page", newPage.toString());
+    urlQueryParams.set("rowsPerPage", newRowsPerPage.toString());
+    props.history.push(window.location.pathname + "?" + urlQueryParams.toString()); 
+  }
+
   const handleFilterChange = (filterName: any) => (event: any) => {
     const val = event.target.value
     setPage(0);
-    resetMoreInformation()
+    setUrLQueryParams(0, rowsPerPage);
+    resetMoreInformation();
 
     setFilterState((oldFilterState) => ({
       ...oldFilterState,
@@ -176,29 +188,31 @@ function PatentList(props: any) {
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
-    resetMoreInformation()
+    setUrLQueryParams(newPage, rowsPerPage);
+    resetMoreInformation();
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-    resetMoreInformation()
+    setUrLQueryParams(0, event.target.value);
+    resetMoreInformation();
   };
 
   const handleClick = (patent: Patent) => {
     if (!currentDisplayInfo) {
-      setCurrentDisplayInfo(patent.lens_id)
-      setOpen(false)
+      setCurrentDisplayInfo(patent.lens_id);
+      setOpen(false);
     } else if (currentDisplayInfo === patent.lens_id) {
-      resetMoreInformation()
+      resetMoreInformation();
     } else {
-      setCurrentDisplayInfo(patent.lens_id)
+      setCurrentDisplayInfo(patent.lens_id);
     }
   };
 
   const resetMoreInformation = () => {
-    setCurrentDisplayInfo("")
-    setOpen(true)
+    setCurrentDisplayInfo("");
+    setOpen(true);
   }
 
   const moreInformation = (patentId: any) => {
