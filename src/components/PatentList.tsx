@@ -114,8 +114,33 @@ function PatentList(props: any) {
   const [urlQueryParams] = React.useState(new URLSearchParams(window.location.search))
 
   React.useEffect(() => {
-    urlQueryParams.set("page", page.toString());
-    urlQueryParams.set("rowsPerPage", rowsPerPage.toString());
+    if(urlQueryParams.has("page")) {
+      if(!isNaN(parseInt(urlQueryParams.get("page")!, 10) - 1)) {
+        setPage(parseInt(urlQueryParams.get("page")!, 10) - 1);
+      }
+      else {
+        urlQueryParams.set("page", (page + 1).toString());
+      }
+    }
+    else {
+      urlQueryParams.set("page", (page + 1).toString());
+    }
+
+    if(urlQueryParams.has("rowsPerPage")) {
+      if(urlQueryParams.get("rowsPerPage")! !== "5" 
+      && urlQueryParams.get("rowsPerPage")! !== "10" 
+      && urlQueryParams.get("rowsPerPage")! !== "25") { 
+        setRowsPerPage(10);
+        urlQueryParams.set("rowsPerPage", "10");
+      }
+      else {
+        setRowsPerPage(parseInt(urlQueryParams.get("rowsPerPage")!, 10));
+      }
+    }
+    else {
+      urlQueryParams.set("rowsPerPage", rowsPerPage.toString());
+    }
+
     props.history.push(window.location.pathname + "?" + urlQueryParams.toString()); 
   }, [urlQueryParams, page, rowsPerPage, props.history])
 
@@ -171,7 +196,7 @@ function PatentList(props: any) {
   // }
 
   const setUrLQueryParams = (newPage: any, newRowsPerPage: any) => {
-    urlQueryParams.set("page", newPage.toString());
+    urlQueryParams.set("page", (newPage + 1).toString());
     urlQueryParams.set("rowsPerPage", newRowsPerPage.toString());
     props.history.push(window.location.pathname + "?" + urlQueryParams.toString()); 
   }
