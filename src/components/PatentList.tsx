@@ -7,6 +7,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TablePagination,
   Paper,
   TextField,
   Card,
@@ -105,11 +106,43 @@ function PatentList(props: any) {
   const { classes } = props
   const [order] = React.useState<'asc' | 'desc'>('asc')
   const [orderBy] = React.useState('lens_id')
-  const [page] = React.useState(0)
-  const [rowsPerPage] = React.useState(10)
+  const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [filterState, setFilterState] = React.useState({ searchTermFilter: '' })
   const [currentDisplayInfo, setCurrentDisplayInfo] = React.useState("");
   const [open, setOpen] = React.useState(true)
+  const [urlQueryParams] = React.useState(new URLSearchParams(window.location.search))
+
+  React.useEffect(() => {
+    if(urlQueryParams.has("page")) {
+      if(!isNaN(parseInt(urlQueryParams.get("page")!, 10) - 1)) {
+        setPage(parseInt(urlQueryParams.get("page")!, 10) - 1);
+      }
+      else {
+        urlQueryParams.set("page", (page + 1).toString());
+      }
+    }
+    else {
+      urlQueryParams.set("page", (page + 1).toString());
+    }
+
+    if(urlQueryParams.has("rowsPerPage")) {
+      if(urlQueryParams.get("rowsPerPage")! !== "5" 
+      && urlQueryParams.get("rowsPerPage")! !== "10" 
+      && urlQueryParams.get("rowsPerPage")! !== "25") { 
+        setRowsPerPage(10);
+        urlQueryParams.set("rowsPerPage", "10");
+      }
+      else {
+        setRowsPerPage(parseInt(urlQueryParams.get("rowsPerPage")!, 10));
+      }
+    }
+    else {
+      urlQueryParams.set("rowsPerPage", rowsPerPage.toString());
+    }
+
+    props.history.push(window.location.pathname + "?" + urlQueryParams.toString()); 
+  }, [urlQueryParams, page, rowsPerPage, props.history])
 
   const getFilter = () => {
     if (filterState.searchTermFilter.length > 0) {
@@ -162,8 +195,17 @@ function PatentList(props: any) {
   //   setOrderBy(newOrderBy)
   // }
 
+  const setUrLQueryParams = (newPage: any, newRowsPerPage: any) => {
+    urlQueryParams.set("page", (newPage + 1).toString());
+    urlQueryParams.set("rowsPerPage", newRowsPerPage.toString());
+    props.history.push(window.location.pathname + "?" + urlQueryParams.toString()); 
+  }
+
   const handleFilterChange = (filterName: any) => (event: any) => {
     const val = event.target.value
+    setPage(0);
+    setUrLQueryParams(0, rowsPerPage);
+    resetMoreInformation();
 
     setFilterState((oldFilterState) => ({
       ...oldFilterState,
@@ -171,19 +213,36 @@ function PatentList(props: any) {
     }))
   }
 
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+    setUrLQueryParams(newPage, rowsPerPage);
+    resetMoreInformation();
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+    setUrLQueryParams(0, event.target.value);
+    resetMoreInformation();
+  };
+
   const handleClick = (patent: Patent) => {
     if (!currentDisplayInfo) {
-      setCurrentDisplayInfo(patent.lens_id)
-      setOpen(false)
+      setCurrentDisplayInfo(patent.lens_id);
+      setOpen(false);
     } else if (currentDisplayInfo === patent.lens_id) {
-      setCurrentDisplayInfo("")
-      setOpen(true)
+      resetMoreInformation();
     } else {
-      setCurrentDisplayInfo(patent.lens_id)
+      setCurrentDisplayInfo(patent.lens_id);
     }
   };
 
-  const MoreInformation = (patentId: any) => {
+  const resetMoreInformation = () => {
+    setCurrentDisplayInfo("");
+    setOpen(true);
+  }
+
+  const moreInformation = (patentId: any) => {
     return (
       <Card className={classes.details} variant="outlined">
         <Title>Patent Details</Title>
@@ -195,7 +254,7 @@ function PatentList(props: any) {
                   }) : "n/a"}
                   <Divider variant="fullWidth" />
                   Lens ID: {filteredPatent.lens_id}
-                    <Divider variant="fullWidth" />
+                  <Divider variant="fullWidth" />
                   Lens URL: {filteredPatent.lens_url}
                   <Divider variant="fullWidth" />
                   Filing Key: {filteredPatent.filing_key}
@@ -312,9 +371,18 @@ function PatentList(props: any) {
         </TableContainer>
       )}
 
-      {!open && MoreInformation(currentDisplayInfo)}
+      {!open && moreInformation(currentDisplayInfo)}
 
       </div>
+      <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={-1}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
     </Paper>
   )
 }
