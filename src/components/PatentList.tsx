@@ -12,7 +12,15 @@ import {
   TextField,
   Card,
   CardContent,
-  Divider
+  Divider,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  useMediaQuery,
+  useTheme
 } from '@material-ui/core'
 import clsx from 'clsx'
 import { useQuery, gql } from '@apollo/client'
@@ -31,36 +39,46 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       maxWidth: '100%',
-      marginTop: theme.spacing(3),
+      height: '89%',
+      marginTop: theme.spacing(1),
       padding: theme.spacing(1),
       overflowX: 'auto',
+      overflowY: 'hidden',
       margin: 'auto',
+    },
+    container: {
+      height: '85%',
+      width: '100%',
+      paddingTop: '80px',
     },
     table: {
       width: '60%',
+      height: '95%',
+      overflowY: 'scroll',
       display: 'inline-block',
     },
     tableOpen: {
       width: '100%',
+      height: '95%',
+      overflowY: 'scroll',
       display: 'inline-block',
     },
     textField: {
       float: 'left',
       marginRight: theme.spacing(1),
-      minWidth: 300,
+      minWidth: 275,
     },
-    details: {
-      width: '29%',
+    detailsCard: {
+      width: '37%',
+      height: '95%',
       display: 'inline-block',
       paddingLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
       marginLeft: theme.spacing(1),
       float: 'right',
-      position: 'absolute',
     },
-    container: {
-      paddingTop: '80px',
-      width: '100%',
+    detailsCardContent: {
+      overflowY: 'auto',
     },
   })
 
@@ -112,6 +130,8 @@ function PatentList(props: any) {
   const [currentDisplayInfo, setCurrentDisplayInfo] = React.useState("");
   const [open, setOpen] = React.useState(true)
   const [urlQueryParams] = React.useState(new URLSearchParams(window.location.search))
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   React.useEffect(() => {
     if(urlQueryParams.has("page")) {
@@ -237,6 +257,10 @@ function PatentList(props: any) {
     }
   };
 
+  const handleClose = () => {
+    setOpen(true);
+  };
+
   const resetMoreInformation = () => {
     setCurrentDisplayInfo("");
     setOpen(true);
@@ -244,9 +268,9 @@ function PatentList(props: any) {
 
   const moreInformation = (patentId: any) => {
     return (
-      <Card className={classes.details} variant="outlined">
+      <Card className={classes.detailsCard} variant="outlined">
         <Title>Patent Details</Title>
-        <CardContent>
+        <CardContent className={classes.detailsCardContent}>
             {data.Patent.filter((patent: Patent) => patent.lens_id === currentDisplayInfo).map((filteredPatent: Patent) => (
               <div key={filteredPatent?.lens_id}>
                 {filteredPatent.titles ? distinctGeneSymbols(filteredPatent.titles).map((geneSymbol) => {
@@ -286,6 +310,62 @@ function PatentList(props: any) {
     )
   }
 
+  const moreInformationFullScreen = (patentId: any) => {
+    return (
+      <Dialog
+      fullScreen={fullScreen}
+      open={!open && fullScreen}
+      onClose={handleClick}
+      aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title"><Title>Patent Details</Title></DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+          {data.Patent.filter((patent: Patent) => patent.lens_id === currentDisplayInfo).map((filteredPatent: Patent) => (
+              <div key={filteredPatent?.lens_id}>
+                {filteredPatent.titles ? distinctGeneSymbols(filteredPatent.titles).map((geneSymbol) => {
+                    return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
+                  }) : "n/a"}
+                  <Divider variant="fullWidth" />
+                  Lens ID: {filteredPatent.lens_id}
+                  <Divider variant="fullWidth" />
+                  Lens URL: {filteredPatent.lens_url}
+                  <Divider variant="fullWidth" />
+                  Filing Key: {filteredPatent.filing_key}
+                  <Divider variant="fullWidth" />
+                  Filing Date: {filteredPatent.filing_date}
+                  <Divider variant="fullWidth" />
+                  Jurisdiction: {filteredPatent.jurisdiction}
+                  <Divider variant="fullWidth" />
+                  Publication date: {filteredPatent.pub_date}
+                  <Divider variant="fullWidth" />
+                  Publication Key: {filteredPatent.pub_key}
+                  <Divider variant="fullWidth" />
+                  Type: {filteredPatent.type}
+                  <Divider variant="fullWidth" />
+                  Titles:
+                  <br/>
+                  {filteredPatent.titles?.map((patentTitles: Maybe<_PatentTitles>) => {
+                    return (
+                      <div key={patentTitles?._id}>
+                        {patentTitles?.title?.lang}: {patentTitles?.title?.text}
+                        <br/>
+                      </div>
+                    )
+                  })}
+              </div>
+            ))}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={handleClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    )
+  }
+
   const distinctGeneSymbols = (patentTitles: Maybe<_PatentTitles>[]): GeneSymbol[] => {
     const geneSymbols = new Map<string, GeneSymbol>()
 
@@ -318,71 +398,71 @@ function PatentList(props: any) {
         }}
       />
       <div className={classes.container}>
-      {loading && !error && <p>Loading...</p>}
-      {error && !loading && <p>Error</p>}
-      {data && !loading && !error && (
-        <TableContainer className={clsx(classes.table, open && classes.tableOpen)} component={Card}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Gene Symbols</TableCell>
-                <TableCell>Lens ID</TableCell>
-                <TableCell>Lens URL</TableCell>
-                <TableCell>Filing Key</TableCell>
-                <TableCell>Filing Date</TableCell>
-                <TableCell>Jurisdiction</TableCell>
-                <TableCell>Pub Date</TableCell>
-                <TableCell>Pub Key</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Title</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.Patent.map((n: Patent) => {
-                return (
-                  <TableRow key={n.lens_id} onClick={(event: any) => handleClick(n)}>
-                    <TableCell>
-                      {n.titles ? distinctGeneSymbols(n.titles).map((geneSymbol) => {
-                        return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
-                      }) : "n/a"}
-                    </TableCell>
-                    <TableCell>{n.lens_id}</TableCell>
-                    <TableCell>{n.lens_url}</TableCell>
-                    <TableCell>{n.filing_key}</TableCell>
-                    <TableCell>{n.filing_date}</TableCell>
-                    <TableCell>{n.jurisdiction}</TableCell>
-                    <TableCell>{n.pub_date}</TableCell>
-                    <TableCell>{n.pub_key}</TableCell>
-                    <TableCell>{n.type}</TableCell>
-                    <TableCell>
-                      {n.titles?.map((patentTitles: Maybe<_PatentTitles>) => {
-                        return (
-                          <div key={patentTitles?._id}>
-                            {patentTitles?.title?.lang}: {patentTitles?.title?.text}
-                          </div>
-                        )
-                      })}
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+        {loading && !error && <p>Loading...</p>}
+        {error && !loading && <p>Error</p>}
+        {data && !loading && !error && (
+          <TableContainer className={clsx(classes.table, open && classes.tableOpen)} component={Card}>
+            <Table stickyHeader={true} style={{ tableLayout: "auto", whiteSpace: "nowrap"}}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Gene Symbols</TableCell>
+                  <TableCell>Lens ID</TableCell>
+                  <TableCell>Lens URL</TableCell>
+                  <TableCell>Filing Key</TableCell>
+                  <TableCell>Filing Date</TableCell>
+                  <TableCell>Jurisdiction</TableCell>
+                  <TableCell>Pub Date</TableCell>
+                  <TableCell>Pub Key</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Title</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.Patent.map((n: Patent) => {
+                  return (
+                    <TableRow key={n.lens_id} onClick={(event: any) => handleClick(n)}>
+                      <TableCell>
+                        {n.titles ? distinctGeneSymbols(n.titles).map((geneSymbol) => {
+                          return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
+                        }) : "n/a"}
+                      </TableCell>
+                      <TableCell>{n.lens_id}</TableCell>
+                      <TableCell>{n.lens_url}</TableCell>
+                      <TableCell>{n.filing_key}</TableCell>
+                      <TableCell>{n.filing_date}</TableCell>
+                      <TableCell>{n.jurisdiction}</TableCell>
+                      <TableCell>{n.pub_date}</TableCell>
+                      <TableCell>{n.pub_key}</TableCell>
+                      <TableCell>{n.type}</TableCell>
+                      <TableCell>
+                        {n.titles?.map((patentTitles: Maybe<_PatentTitles>) => {
+                          return (
+                            <div key={patentTitles?._id}>
+                              {patentTitles?.title?.lang}: {patentTitles?.title?.text}
+                            </div>
+                          )
+                        })}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
 
-      {!open && moreInformation(currentDisplayInfo)}
-
+        {!open && !fullScreen && moreInformation(currentDisplayInfo)}
+        {!open && fullScreen && moreInformationFullScreen(currentDisplayInfo)}
       </div>
-      <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={-1}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+    <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={-1}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
     </Paper>
   )
 }

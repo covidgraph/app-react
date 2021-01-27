@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   toolbar: {
+    height: '75px',
     paddingRight: 24, // keep right padding when drawer closed
   },
   toolbarIcon: {
@@ -93,10 +94,13 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
+    overflowY: 'hidden',
   },
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
+    overflowY: 'hidden',
+    height: '100vh',
   },
   paper: {
     padding: theme.spacing(2),
@@ -118,8 +122,9 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function App() {
+  const widthMobile = window.innerWidth < 601 ? false : true
   const classes = useStyles()
-  const [open, setOpen] = React.useState(true)
+  const [open, setOpen] = React.useState(widthMobile)
   const handleDrawerOpen = () => {
     setOpen(true)
   }
