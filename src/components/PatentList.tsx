@@ -271,40 +271,7 @@ function PatentList(props: any) {
       <Card className={classes.detailsCard} variant="outlined">
         <Title>Patent Details</Title>
         <CardContent className={classes.detailsCardContent}>
-            {data.Patent.filter((patent: Patent) => patent.lens_id === currentDisplayInfo).map((filteredPatent: Patent) => (
-              <div key={filteredPatent?.lens_id}>
-                {filteredPatent.titles ? distinctGeneSymbols(filteredPatent.titles).map((geneSymbol) => {
-                    return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
-                  }) : "n/a"}
-                  <Divider variant="fullWidth" />
-                  Lens ID: {filteredPatent.lens_id}
-                  <Divider variant="fullWidth" />
-                  Lens URL: {filteredPatent.lens_url}
-                  <Divider variant="fullWidth" />
-                  Filing Key: {filteredPatent.filing_key}
-                  <Divider variant="fullWidth" />
-                  Filing Date: {filteredPatent.filing_date}
-                  <Divider variant="fullWidth" />
-                  Jurisdiction: {filteredPatent.jurisdiction}
-                  <Divider variant="fullWidth" />
-                  Publication date: {filteredPatent.pub_date}
-                  <Divider variant="fullWidth" />
-                  Publication Key: {filteredPatent.pub_key}
-                  <Divider variant="fullWidth" />
-                  Type: {filteredPatent.type}
-                  <Divider variant="fullWidth" />
-                  Titles:
-                  <br/>
-                  {filteredPatent.titles?.map((patentTitles: Maybe<_PatentTitles>) => {
-                    return (
-                      <div key={patentTitles?._id}>
-                        {patentTitles?.title?.lang}: {patentTitles?.title?.text}
-                        <br/>
-                      </div>
-                    )
-                  })}
-              </div>
-            ))}
+          {detailedInformation(patentId)}
         </CardContent>
       </Card>
     )
@@ -321,40 +288,7 @@ function PatentList(props: any) {
         <DialogTitle id="responsive-dialog-title"><Title>Patent Details</Title></DialogTitle>
         <DialogContent>
           <DialogContentText>
-          {data.Patent.filter((patent: Patent) => patent.lens_id === currentDisplayInfo).map((filteredPatent: Patent) => (
-              <div key={filteredPatent?.lens_id}>
-                {filteredPatent.titles ? distinctGeneSymbols(filteredPatent.titles).map((geneSymbol) => {
-                    return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
-                  }) : "n/a"}
-                  <Divider variant="fullWidth" />
-                  Lens ID: {filteredPatent.lens_id}
-                  <Divider variant="fullWidth" />
-                  Lens URL: {filteredPatent.lens_url}
-                  <Divider variant="fullWidth" />
-                  Filing Key: {filteredPatent.filing_key}
-                  <Divider variant="fullWidth" />
-                  Filing Date: {filteredPatent.filing_date}
-                  <Divider variant="fullWidth" />
-                  Jurisdiction: {filteredPatent.jurisdiction}
-                  <Divider variant="fullWidth" />
-                  Publication date: {filteredPatent.pub_date}
-                  <Divider variant="fullWidth" />
-                  Publication Key: {filteredPatent.pub_key}
-                  <Divider variant="fullWidth" />
-                  Type: {filteredPatent.type}
-                  <Divider variant="fullWidth" />
-                  Titles:
-                  <br/>
-                  {filteredPatent.titles?.map((patentTitles: Maybe<_PatentTitles>) => {
-                    return (
-                      <div key={patentTitles?._id}>
-                        {patentTitles?.title?.lang}: {patentTitles?.title?.text}
-                        <br/>
-                      </div>
-                    )
-                  })}
-              </div>
-            ))}
+            {detailedInformation(patentId)}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -363,6 +297,45 @@ function PatentList(props: any) {
           </Button>
         </DialogActions>
       </Dialog>
+    )
+  }
+
+  const detailedInformation = (patentId: any) => {
+    return (
+      data.Patent.filter((patent: Patent) => patent.lens_id === currentDisplayInfo).map((filteredPatent: Patent) => (
+        <div key={filteredPatent?.lens_id}>
+          {filteredPatent.titles ? distinctGeneSymbols(filteredPatent.titles).map((geneSymbol) => {
+              return <div key={geneSymbol.sid}>{geneSymbol.sid}</div>
+            }) : "n/a"}
+            <Divider variant="fullWidth" />
+            Lens ID: {filteredPatent.lens_id}
+            <Divider variant="fullWidth" />
+            Lens URL: {filteredPatent.lens_url}
+            <Divider variant="fullWidth" />
+            Filing Key: {filteredPatent.filing_key}
+            <Divider variant="fullWidth" />
+            Filing Date: {filteredPatent.filing_date}
+            <Divider variant="fullWidth" />
+            Jurisdiction: {filteredPatent.jurisdiction}
+            <Divider variant="fullWidth" />
+            Publication date: {filteredPatent.pub_date}
+            <Divider variant="fullWidth" />
+            Publication Key: {filteredPatent.pub_key}
+            <Divider variant="fullWidth" />
+            Type: {filteredPatent.type}
+            <Divider variant="fullWidth" />
+            Titles:
+            <br/>
+            {filteredPatent.titles?.map((patentTitles: Maybe<_PatentTitles>) => {
+              return (
+                <div key={patentTitles?._id}>
+                  {patentTitles?.title?.lang}: {patentTitles?.title?.text}
+                  <br/>
+                </div>
+              )
+            })}
+        </div>
+      ))
     )
   }
 
