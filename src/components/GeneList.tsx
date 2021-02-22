@@ -79,6 +79,9 @@ const styles = (theme: Theme) =>
     detailsCardContent: {
       overflowY: 'auto',
     },
+    tableCell: {
+      verticalAlign: "top",
+    }
   })
 
 const GET_GENES = gql`
@@ -114,12 +117,27 @@ const GET_GENES = gql`
       tax_id,
       taxid,
       type_of_gene,
+      transcripts{
+        transcript{
+          proteins{
+            protein{
+              sid,
+              name
+            }
+          }
+        }
+      }
       mapsGeneSymbols{
         source,
         symbol{
           sid,
           status,
           taxid
+        }
+      }
+      pathways{
+        pathway{
+          name
         }
       }
     }
@@ -341,6 +359,25 @@ function GeneList(props: any) {
           <Divider variant="fullWidth" />
           Type of Gene: {filteredGene.type_of_gene}
           <Divider variant="fullWidth" />
+          Pathways:
+          {filteredGene.pathways?.map((pathways: any) => {
+            return(
+              <div>{pathways?.pathway.name}</div>
+            )
+          })}
+          <Divider variant="fullWidth" />
+          Proteins:
+          {filteredGene.transcripts?.map((transcripts: any) => {
+            return(
+              <div>
+                {transcripts?.transcript.proteins.map((protein: any) => {
+                  return(
+                    <div>SID:{protein.protein.sid}|name:{protein.protein.name}</div>
+                  )
+                })}
+              </div>
+            )
+          })}
         </div>
       ))
     )
@@ -391,37 +428,52 @@ function GeneList(props: any) {
                   <TableCell>tax_id</TableCell>
                   <TableCell>taxid</TableCell>
                   <TableCell>type_of_gene</TableCell>
+                  <TableCell>pathways</TableCell>
+                  <TableCell>proteins</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {data.Gene.map((n: Gene) => {
                   return (
                     <TableRow key={n.sid} onClick={(event: any) => handleClick(n)}>
-                      <TableCell>{n.mapsGeneSymbols?.map((geneMapsGeneSymbols: Maybe<_GeneMapsGeneSymbols>) => {
+                      <TableCell className={classes.tableCell}>{n.mapsGeneSymbols?.map((geneMapsGeneSymbols: Maybe<_GeneMapsGeneSymbols>) => {
                         return <Tooltip title={geneMapsGeneSymbols?.symbol?.status + " from " + geneMapsGeneSymbols?.source}>
                           <div>{geneMapsGeneSymbols?.symbol?.sid}</div>
                         </Tooltip>
                       })}</TableCell>
-                      <TableCell>{n.sid}</TableCell>
-                      <TableCell>{n.Feature_type}</TableCell>
-                      <TableCell>{n.Full_name_from_nomenclature_authority}</TableCell>
-                      <TableCell>{n.GeneID}</TableCell>
-                      <TableCell>{n.LocusTag}</TableCell>
-                      <TableCell>{n.Modification_date}</TableCell>
-                      <TableCell>{n.Nomenclature_status}</TableCell>
-                      <TableCell>{n.Other_designations}</TableCell>
-                      <TableCell>{n.Symbol}</TableCell>
-                      <TableCell>{n.Symbol_from_nomenclature_authority}</TableCell>
-                      <TableCell>{n.Synonyms}</TableCell>
-                      <TableCell>{n.chromosome}</TableCell>
-                      <TableCell>{n.dbXrefs}</TableCell>
-                      <TableCell>{n.description}</TableCell>
-                      <TableCell>{n.map_location}</TableCell>
-                      <TableCell>{n.name}</TableCell>
-                      <TableCell>{n.source}</TableCell>
-                      <TableCell>{n.tax_id}</TableCell>
-                      <TableCell>{n.taxid}</TableCell>
-                      <TableCell>{n.type_of_gene}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.sid}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.Feature_type}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.Full_name_from_nomenclature_authority}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.GeneID}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.LocusTag}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.Modification_date}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.Nomenclature_status}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.Other_designations}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.Symbol}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.Symbol_from_nomenclature_authority}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.Synonyms}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.chromosome}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.dbXrefs}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.description}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.map_location}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.name}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.source}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.tax_id}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.taxid}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.type_of_gene}</TableCell>
+                      <TableCell className={classes.tableCell}>{n.pathways?.map((pathways: any) => {
+                          return(<div>{pathways?.pathway.name}</div>)
+                        })}
+                      </TableCell>
+                      <TableCell className={classes.tableCell}>{n.transcripts?.map((transcripts: any) => {
+                          return(<div>
+                              {transcripts?.transcript.proteins.map((protein: any) => {
+                                return(<div>SID:{protein.protein.sid}|name:{protein.protein.name}</div>
+                                )
+                              })}
+                            </div>)
+                        })}
+                      </TableCell>
                     </TableRow>
                   )
                 })}
