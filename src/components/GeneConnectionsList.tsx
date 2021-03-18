@@ -70,44 +70,28 @@ const GET_GENE_SYMBOLS = gql`
 `
 
 function GeneConnectionsList(props: any) {
+  const ROWS_PER_PAGE_OPTIONS = [10, 20, 50, 100];
+  const urlQueryParams = new URLSearchParams(window.location.search);
+
+  let rowsPerPageInit = 50;
+  if(urlQueryParams.has("rowsPerPage") 
+      && ROWS_PER_PAGE_OPTIONS.includes(parseInt(urlQueryParams.get("rowsPerPage")!))){
+        rowsPerPageInit = parseInt(urlQueryParams.get("rowsPerPage")!);
+  }
+
+  let pageInit = 0;
+  if(urlQueryParams.has("page") 
+      && !isNaN(parseInt(urlQueryParams.get("page")!, 10) - 1)){
+        pageInit = parseInt(urlQueryParams.get("page")!, 10) - 1;
+  }
+  
   const { classes } = props
   const [order] = React.useState<'asc' | 'desc'>('asc')
   const [orderBy] = React.useState('sid')
-  const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [page, setPage] = React.useState(pageInit)
+  const [rowsPerPage, setRowsPerPage] = React.useState(rowsPerPageInit)
   const [filterState, setFilterState] = React.useState({ searchTermFilter: '' })
-  const [urlQueryParams] = React.useState(new URLSearchParams(window.location.search))
-
-  React.useEffect(() => {
-    if(urlQueryParams.has("page")) {
-      if(!isNaN(parseInt(urlQueryParams.get("page")!, 10) - 1)) {
-        setPage(parseInt(urlQueryParams.get("page")!, 10) - 1);
-      }
-      else {
-        urlQueryParams.set("page", (page + 1).toString());
-      }
-    }
-    else {
-      urlQueryParams.set("page", (page + 1).toString());
-    }
-
-    if(urlQueryParams.has("rowsPerPage")) {
-      if(urlQueryParams.get("rowsPerPage")! !== "5" 
-      && urlQueryParams.get("rowsPerPage")! !== "10" 
-      && urlQueryParams.get("rowsPerPage")! !== "25") { 
-        setRowsPerPage(10);
-        urlQueryParams.set("rowsPerPage", "10");
-      }
-      else {
-        setRowsPerPage(parseInt(urlQueryParams.get("rowsPerPage")!, 10));
-      }
-    }
-    else {
-      urlQueryParams.set("rowsPerPage", rowsPerPage.toString());
-    }
-
-    props.history.push(window.location.pathname + "?" + urlQueryParams.toString()); 
-  }, [urlQueryParams, page, rowsPerPage, props.history])
+ 
 
   const getFilter = () => {
     if (filterState.searchTermFilter.length > 0) {
@@ -146,7 +130,7 @@ function GeneConnectionsList(props: any) {
   //   setOrderBy(newOrderBy)
   // }
 
-  const setUrLQueryParams = (newPage: any, newRowsPerPage: any) => {
+  const setUrlQueryParams = (newPage: any, newRowsPerPage: any) => {
     urlQueryParams.set("page", (newPage + 1).toString());
     urlQueryParams.set("rowsPerPage", newRowsPerPage.toString());
     props.history.push(window.location.pathname + "?" + urlQueryParams.toString()); 
@@ -163,13 +147,13 @@ function GeneConnectionsList(props: any) {
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
-    setUrLQueryParams(newPage, rowsPerPage);
+    setUrlQueryParams(newPage, rowsPerPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-    setUrLQueryParams(0, event.target.value);
+    setUrlQueryParams(0, event.target.value);
   };
 
 
@@ -201,7 +185,7 @@ function GeneConnectionsList(props: any) {
         )}
       </div>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
         component="div"
         count={-1}
         rowsPerPage={rowsPerPage}
