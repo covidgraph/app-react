@@ -97,6 +97,9 @@ function GeneConnectionsList(props: any) {
     if (filterState.searchTermFilter.length > 0) {
     }
     return {
+      OR: [
+        {sid_contains: filterState.searchTermFilter}
+      ]
       // OR: [
       //   {Full_name_from_nomenclature_authority_contains: filterState.searchTermFilter},
       //   {name_contains: filterState.searchTermFilter},
@@ -177,11 +180,13 @@ function GeneConnectionsList(props: any) {
         {loading && !error && <p>Loading...</p>}
         {error && !loading && <p>Error</p>}
         {data && !loading && !error && (
+          data.GeneSymbol.length > 0 &&
           <Box className={classes.elementList}>
             {data.GeneSymbol.map((geneSymbol: GeneSymbol) => {
               return <GeneListElement key={geneSymbol.sid} geneSymbol={geneSymbol}></GeneListElement>;
             })}
           </Box>
+          || <p>No results</p>
         )}
       </div>
       <TablePagination
