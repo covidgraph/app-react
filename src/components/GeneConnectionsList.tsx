@@ -45,24 +45,24 @@ const styles = (theme: Theme) =>
     }
   })
 
-const GET_GENE_SYMBOLS = gql`
-  query geneSymbolPaginateQuery(
-    $first: Int,
+const GET_GENES = gql`
+  query genePaginateQuery(
+    $first: Int
     $offset: Int
-    $orderBy: [_GeneSymbolOrdering]
-    $filter: _GeneSymbolFilter){
-    GeneSymbol(
-      first: $first,
+    $orderBy: [_GeneOrdering]
+    $filter: _GeneFilter
+  ) {
+    Gene(
+      first: $first
       offset: $offset
       orderBy: $orderBy
       filter: $filter
-    ){
+    ) {
       sid,
-      synonyms{
-        synonym{
-          GeneSymbol{
-            sid
-          }
+      mapsGeneSymbols{
+        source,
+        symbol{
+          sid
         }
       }
     }
@@ -73,7 +73,7 @@ function GeneConnectionsList(props: any) {
   const ROWS_PER_PAGE_OPTIONS = [10, 20, 50, 100];
   const urlQueryParams = new URLSearchParams(window.location.search);
 
-  let rowsPerPageInit = 50;
+  let rowsPerPageInit = 10;
   if(urlQueryParams.has("rowsPerPage") 
       && ROWS_PER_PAGE_OPTIONS.includes(parseInt(urlQueryParams.get("rowsPerPage")!))){
         rowsPerPageInit = parseInt(urlQueryParams.get("rowsPerPage")!);
@@ -95,24 +95,24 @@ function GeneConnectionsList(props: any) {
 
   const getFilter = () => {
     if (filterState.searchTermFilter.length > 0) {
-    }
-    return {
-      OR: [
-        {sid_contains: filterState.searchTermFilter}
-      ]
-      // OR: [
-      //   {Full_name_from_nomenclature_authority_contains: filterState.searchTermFilter},
-      //   {name_contains: filterState.searchTermFilter},
-      //   {mapsGeneSymbols_some: {
-      //     symbol: {
-      //       sid_contains: "ACE2"
-      //     }
-      //   }}
-      // ],
+      return {
+        // OR: [
+        //   {sid_contains: filterState.searchTermFilter}
+        // ]
+        OR: [
+          // {Full_name_from_nomenclature_authority_contains: filterState.searchTermFilter},
+          // {name_contains: filterState.searchTermFilter},
+          {mapsGeneSymbols_some: {
+            symbol: {
+              sid_contains: filterState.searchTermFilter
+            }
+          }}
+        ],
+      }
     }
   }
 
-  const { loading, data, error } = useQuery(GET_GENE_SYMBOLS, {
+  const { loading, data, error } = useQuery(GET_GENES, {
     variables: {
       first: rowsPerPage,
       offset: rowsPerPage * page,
@@ -180,10 +180,10 @@ function GeneConnectionsList(props: any) {
         {loading && !error && <p>Loading...</p>}
         {error && !loading && <p>Error</p>}
         {data && !loading && !error && (
-          data.GeneSymbol.length > 0 &&
+          data.Gene.length > 0 &&
           <Box className={classes.elementList}>
-            {data.GeneSymbol.map((geneSymbol: GeneSymbol) => {
-              return <GeneListElement key={geneSymbol.sid} geneSymbol={geneSymbol}></GeneListElement>;
+            {data.Gene.map((gene: Gene) => {
+              return <GeneListElement key={gene.sid} gene={gene}></GeneListElement>;
             })}
           </Box>
           || <p>No results</p>

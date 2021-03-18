@@ -5,6 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 
 const uri = process.env.REACT_APP_GRAPHQL_URI || 'http://localhost:4001/graphql'
 const cache = new InMemoryCache();
@@ -14,9 +15,19 @@ const client = new ApolloClient({
   cache
 })
 
+const theme = createMuiTheme({
+  typography: {
+    h4: {
+      fontSize: "1.2rem"
+    }
+  }
+});
+
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </ApolloProvider>,
   document.getElementById('root')
 );
