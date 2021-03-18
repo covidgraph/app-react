@@ -97,8 +97,8 @@ const useStyles = makeStyles((theme) => ({
     overflowY: 'hidden',
   },
   container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
+    // paddingTop: theme.spacing(4),
+    // paddingBottom: theme.spacing(4),
     overflowY: 'hidden',
     height: '100vh',
   },
@@ -205,7 +205,7 @@ export default function App() {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <Container maxWidth="lg" className={classes.container}>
+          <Container maxWidth={false} disableGutters={true} className={classes.container}>
             <Switch>
               <Route exact path="/" component={PatentList} />
               <Route exact path="/genes" component={GeneList} />
