@@ -4,6 +4,7 @@ import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 
 import PatentList from './components/PatentList'
 import GeneList from './components/GeneList'
+import GeneConnectionsList from './components/GeneConnectionsList'
 
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
@@ -188,18 +189,20 @@ export default function App() {
                 <ListItemIcon>
                   <FindInPageIcon />
                 </ListItemIcon>
-                <ListItemText primary="Patents" />
+                <ListItemText primary="Genes" />
               </ListItem>
             </Link>
 
-            <Link to="/genes" className={classes.navLink}>
+            <Link to="/patents" className={classes.navLink}>
               <ListItem button>
                 <ListItemIcon>
                   <FindInPageIcon />
                 </ListItemIcon>
-                <ListItemText primary="Genes" />
+                <ListItemText primary="Patents" />
               </ListItem>
             </Link>
+
+            
           </List>
           <Divider />
         </Drawer>
@@ -207,8 +210,9 @@ export default function App() {
           <div className={classes.appBarSpacer} />
           <Container maxWidth={false} disableGutters={true} className={classes.container}>
             <Switch>
-              <Route exact path="/" component={PatentList} />
-              <Route exact path="/genes" component={GeneList} />
+              <Route exact path="/" component={GeneConnectionsList} />
+              <Route exact path="/patents" component={PatentList} />  
+              {/* <Route exact path="/genes-old" component={GeneList} /> */}
             </Switch>
           </Container>
         </main>
