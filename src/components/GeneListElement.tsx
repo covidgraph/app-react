@@ -5,7 +5,7 @@ import {
   Chip,
   Grid
 } from '@material-ui/core'
-import { Gene, Maybe, _GeneMapsGeneSymbols, _GeneSymbolSynonyms } from '../generated/graphql';
+import { Gene, Maybe, Protein, _GeneMapsGeneSymbols, _GeneSymbolSynonyms, _GeneTranscripts, _TranscriptProteins } from '../generated/graphql';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -20,6 +20,24 @@ const styles = (theme: Theme) =>
 
 interface Props extends WithStyles<typeof styles> {
   gene: Gene
+}
+
+const distinctProteins = (maybeTranscripts: Maybe<Maybe<_GeneTranscripts>[]>): Protein[] => {
+  const proteins = new Map<string, Protein>()
+
+  if(maybeTranscripts !== null){
+    maybeTranscripts.forEach((gt: Maybe<_GeneTranscripts>) => {
+      if(gt !== null){
+        gt.transcript?.proteins?.forEach((protein: Maybe<_TranscriptProteins>) => {
+          if(protein?.protein){
+            proteins.set(protein.protein.sid, protein.protein);
+          }
+        })
+      }
+    })
+  }
+
+  return Array.from(proteins.values())
 }
 
 const GridItemTitle = withStyles(styles)((props: any) => 
@@ -42,6 +60,16 @@ function GeneListElement(props: Props) {
             return <Chip key={geneMapsGeneSymbols?.symbol?.sid} label={geneMapsGeneSymbols?.symbol?.sid}></Chip>
           })}
         </GridItemValue>
+
+        <GridItemTitle>Transcripts</GridItemTitle>
+        <GridItemValue>{props.gene.transcripts?.map((transcripts: Maybe<_GeneTranscripts>) => {
+          return <Chip key={transcripts?.transcript?.sid} label={transcripts?.transcript?.sid}></Chip>
+        })}</GridItemValue>
+
+        <GridItemTitle>Coding Proteins</GridItemTitle>
+        <GridItemValue>{distinctProteins(props.gene.transcripts!).map((protein: Protein) => {
+          return <Chip key={protein.sid} label={protein.sid}></Chip>
+        })}</GridItemValue>
       </Grid>
     </Card>
   )

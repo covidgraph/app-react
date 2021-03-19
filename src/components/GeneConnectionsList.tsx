@@ -59,6 +59,17 @@ const GET_GENES = gql`
       filter: $filter
     ) {
       sid,
+      transcripts{
+        transcript{
+          sid,
+          proteins{
+            protein{
+              sid,
+              name
+            }
+          }
+        }
+      }
       mapsGeneSymbols{
         source,
         symbol{
