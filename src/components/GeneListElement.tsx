@@ -5,7 +5,7 @@ import {
   Chip,
   Grid
 } from '@material-ui/core'
-import { Gene, Maybe, Protein, _GeneMapsGeneSymbols, _GeneSymbolSynonyms, _GeneTranscripts, _TranscriptProteins } from '../generated/graphql';
+import { Gene, Maybe, Protein, _GeneMapsGeneSymbols, _GeneTranscripts, _TranscriptProteins } from '../generated/graphql';
 
 const styles = (theme: Theme) =>
   createStyles({

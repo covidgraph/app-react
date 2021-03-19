@@ -7,15 +7,11 @@ import {
   Paper,
   TextField
 } from '@material-ui/core'
-import clsx from 'clsx'
 import { useQuery, gql } from '@apollo/client'
 import Title from './Title'
 
 import { 
-  Maybe,
-  Gene,
-  _GeneMapsGeneSymbols,
-  GeneSymbol
+  Gene
 } from '../generated/graphql'
 
 const styles = (theme: Theme) =>
@@ -191,12 +187,12 @@ function GeneConnectionsList(props: any) {
         {loading && !error && <p>Loading...</p>}
         {error && !loading && <p>Error</p>}
         {data && !loading && !error && (
-          data.Gene.length > 0 &&
+          (data.Gene.length > 0 &&
           <Box className={classes.elementList}>
             {data.Gene.map((gene: Gene) => {
               return <GeneListElement key={gene.sid} gene={gene}></GeneListElement>;
             })}
-          </Box>
+          </Box>)
           || <p>No results</p>
         )}
       </div>

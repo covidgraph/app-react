@@ -3,7 +3,6 @@ import React from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 
 import PatentList from './components/PatentList'
-import GeneList from './components/GeneList'
 import GeneConnectionsList from './components/GeneConnectionsList'
 
 import clsx from 'clsx'
