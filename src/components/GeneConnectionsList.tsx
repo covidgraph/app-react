@@ -13,6 +13,7 @@ import {
   Gene
 } from '../generated/graphql'
 import SearchField from './SearchField'
+import { getPageValue, getRowsPerPageValue } from '../util/PaginationParams'
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -72,20 +73,11 @@ const GET_GENES = gql`
 `
 
 function GeneConnectionsList(props: any) {
-  const ROWS_PER_PAGE_OPTIONS = [10, 20, 50, 100];
+  const ROWS_PER_PAGE_OPTIONS = [1, 2, 5, 10, 20, 50, 100];
   const urlQueryParams = new URLSearchParams(window.location.search);
 
-  let rowsPerPageInit = 10;
-  if(urlQueryParams.has("rowsPerPage") 
-      && ROWS_PER_PAGE_OPTIONS.includes(parseInt(urlQueryParams.get("rowsPerPage")!))){
-        rowsPerPageInit = parseInt(urlQueryParams.get("rowsPerPage")!);
-  }
-
-  let pageInit = 0;
-  if(urlQueryParams.has("page") 
-      && !isNaN(parseInt(urlQueryParams.get("page")!, 10) - 1)){
-        pageInit = parseInt(urlQueryParams.get("page")!, 10) - 1;
-  }
+  let rowsPerPageInit = getRowsPerPageValue(2, ROWS_PER_PAGE_OPTIONS);
+  let pageInit = getPageValue(0);
   
   const { classes } = props
   const [order] = React.useState<'asc' | 'desc'>('asc')
@@ -94,7 +86,6 @@ function GeneConnectionsList(props: any) {
   const [rowsPerPage, setRowsPerPage] = React.useState(rowsPerPageInit)
   const [filterState, setFilterState] = React.useState({ searchTermFilter: '' })
  
-
   const getFilter = () => {
     if (filterState.searchTermFilter.length > 0) {
       return {
