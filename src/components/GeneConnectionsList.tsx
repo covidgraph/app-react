@@ -4,8 +4,7 @@ import GeneListElement from './GeneListElement'
 import {
   Box,
   TablePagination,
-  Paper,
-  TextField
+  Paper
 } from '@material-ui/core'
 import { useQuery, gql } from '@apollo/client'
 import Title from './Title'
@@ -13,6 +12,7 @@ import Title from './Title'
 import { 
   Gene
 } from '../generated/graphql'
+import SearchField from './SearchField'
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -33,11 +33,6 @@ const styles = (theme: Theme) =>
     elementList: {
       height: '100%',
       overflowY: 'scroll',
-    },
-    textField: {
-      float: 'left',
-      marginRight: theme.spacing(1),
-      minWidth: 275,
     }
   })
 
@@ -170,18 +165,9 @@ function GeneConnectionsList(props: any) {
   return (
     <Paper className={classes.root}>
       <Title>Gene List</Title>
-      <TextField
-        id="search"
-        label="Search"
-        className={classes.textField}
+      <SearchField
         value={filterState.searchTermFilter}
         onChange={handleFilterChange('searchTermFilter')}
-        margin="normal"
-        variant="outlined"
-        type="text"
-        InputProps={{
-          className: classes.input,
-        }}
       />
       <div className={classes.container}>
         {loading && !error && <p>Loading...</p>}

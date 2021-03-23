@@ -9,7 +9,6 @@ import {
   TableRow,
   TablePagination,
   Paper,
-  TextField,
   Card,
   CardContent,
   Divider,
@@ -34,6 +33,7 @@ import {
   FromPatentTitle,
   _FromPatentTitleGeneSymbols
 } from '../generated/graphql'
+import SearchField from './SearchField'
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -62,11 +62,6 @@ const styles = (theme: Theme) =>
       height: '95%',
       overflowY: 'scroll',
       display: 'inline-block',
-    },
-    textField: {
-      float: 'left',
-      marginRight: theme.spacing(1),
-      minWidth: 275,
     },
     detailsCard: {
       width: '37%',
@@ -357,18 +352,9 @@ function PatentList(props: any) {
   return (
     <Paper className={classes.root}>
       <Title>Patent List</Title>
-      <TextField
-        id="search"
-        label="Search"
-        className={classes.textField}
+      <SearchField
         value={filterState.searchTermFilter}
         onChange={handleFilterChange('searchTermFilter')}
-        margin="normal"
-        variant="outlined"
-        type="text"
-        InputProps={{
-          className: classes.input,
-        }}
       />
       <div className={classes.container}>
         {loading && !error && <p>Loading...</p>}
