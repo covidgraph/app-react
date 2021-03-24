@@ -5,7 +5,7 @@ import {
   Chip,
   Grid
 } from '@material-ui/core'
-import { Gene, Maybe, Protein, _GeneMapsGeneSymbols, _GeneTranscripts, _TranscriptProteins } from '../generated/graphql';
+import { Gene, Maybe, Protein, Transcript, _GeneMapsGeneSymbols, _GeneTranscripts, _TranscriptProteins } from '../generated/graphql';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -15,6 +15,9 @@ const styles = (theme: Theme) =>
     },
     gridItemTitle: {
       fontWeight: 'bold'
+    },
+    chipFocused: {
+      background: theme.palette.secondary.main
     }
   })
 
@@ -22,15 +25,25 @@ interface Props extends WithStyles<typeof styles> {
   gene: Gene
 }
 
-const distinctProteins = (maybeTranscripts: Maybe<Maybe<_GeneTranscripts>[]>): Protein[] => {
-  const proteins = new Map<string, Protein>()
+interface ProteinWrapper{
+  protein: Protein,
+  transcriptSids: string[]
+}
+
+const distinctProteins = (maybeTranscripts: Maybe<Maybe<_GeneTranscripts>[]>): ProteinWrapper[] => {
+  const proteins = new Map<string, ProteinWrapper>()
 
   if(maybeTranscripts !== null){
     maybeTranscripts.forEach((gt: Maybe<_GeneTranscripts>) => {
       if(gt !== null){
         gt.transcript?.proteins?.forEach((protein: Maybe<_TranscriptProteins>) => {
           if(protein?.protein){
-            proteins.set(protein.protein.sid, protein.protein);
+            if(proteins.has(protein.protein.sid)){
+              proteins.get(protein.protein.sid)?.transcriptSids.push(gt.transcript!.sid);
+            }
+            else{
+              proteins.set(protein.protein.sid, {protein: protein.protein, transcriptSids: [gt.transcript!.sid]});
+            }
           }
         })
       }
@@ -47,6 +60,7 @@ const GridItemValue = (props: any) => <Grid item xs={12} sm={8} md={10} lg={11}>
 
 function GeneListElement(props: Props) {
   const { classes } = props;
+  const [hoveredTranscript, setHoveredTranscript] = React.useState<Transcript|null>(null);
   
   return (
     <Card className={classes.root}>
@@ -63,12 +77,20 @@ function GeneListElement(props: Props) {
 
         <GridItemTitle>Transcripts</GridItemTitle>
         <GridItemValue>{props.gene.transcripts?.map((transcripts: Maybe<_GeneTranscripts>) => {
-          return <Chip key={transcripts?.transcript?.sid} label={transcripts?.transcript?.sid}></Chip>
+          return <Chip 
+                    key={transcripts?.transcript?.sid} 
+                    label={transcripts?.transcript?.sid} 
+                    className={hoveredTranscript?.sid == transcripts?.transcript?.sid ? classes.chipFocused : ''}
+                    onMouseOver={() => setHoveredTranscript(transcripts?.transcript!)} 
+                    onMouseLeave={() => setHoveredTranscript(null)} />
         })}</GridItemValue>
 
         <GridItemTitle>Coding Proteins</GridItemTitle>
-        <GridItemValue>{distinctProteins(props.gene.transcripts!).map((protein: Protein) => {
-          return <Chip key={protein.sid} label={protein.sid}></Chip>
+        <GridItemValue>{distinctProteins(props.gene.transcripts!).map((protein: ProteinWrapper) => {
+          return <Chip 
+                    key={protein.protein.sid} 
+                    label={protein.protein.sid}
+                    className={(hoveredTranscript && protein.transcriptSids.indexOf(hoveredTranscript.sid) > -1) ? classes.chipFocused : ''} />
         })}</GridItemValue>
       </Grid>
     </Card>
