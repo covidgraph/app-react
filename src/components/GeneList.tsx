@@ -1,3 +1,6 @@
+// this has been replaced by GeneConnectionsList
+// just here for reference for time being
+
 import React from 'react'
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles'
 import {

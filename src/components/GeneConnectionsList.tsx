@@ -37,6 +37,7 @@ const styles = (theme: Theme) =>
     }
   })
 
+// Graph QL API TODO: speed up this query
 const GET_GENES = gql`
   query genePaginateQuery(
     $first: Int
