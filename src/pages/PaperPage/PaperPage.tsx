@@ -1,10 +1,6 @@
-import React, { useState, ChangeEvent, MouseEvent  } from "react";
-import { RouteComponentProps } from "react-router-dom";
-
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import React, { useState, ChangeEvent  } from "react";
+import { RouteComponentProps, useParams } from "react-router-dom";
 import {
-  Backdrop,
-  CircularProgress,
   Table,
   TableBody,
   TableCell,
@@ -14,35 +10,18 @@ import {
 } from "@material-ui/core";
 import { useQuery } from "@apollo/client";
 import { Paper } from "../../generated/graphql";
-import { getPageValue, getRowsPerPageValue } from "../../util/PaginationParams";
 import { GET_PAPER } from "./gql";
 import { ROWS_PER_PAGE_OPTIONS } from "./constants";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    backdrop: {
-      zIndex: theme.zIndex.drawer + 1,
-      color: "#fff",
-    },
-  })
-);
+import { PageLoader } from "../../components";
 
 interface PaperPageProps extends RouteComponentProps<any> {}
 
 export const PaperPage: React.FunctionComponent<PaperPageProps> = (props) => {
 
-  const urlQueryParams = new URLSearchParams(window.location.search);
-
-  console.log(urlQueryParams);
-
-  let rowsPerPageInit = getRowsPerPageValue(20, ROWS_PER_PAGE_OPTIONS);
-  let pageInit = getPageValue(0);
-
-  const classes = useStyles();
   const [order] = useState<"asc" | "desc">("asc");
   const [orderBy] = useState("_hash_id");
-  const [page, setPage] = useState(pageInit);
-  const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageInit);
+  const [page, setPage] = useState<number>(props.match.params.page | 0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(props.match.params.rowsPerPage | 20);
 
   const setUrlQueryParams = (newPage: number, newRowsPerPage: number | ChangeEvent<HTMLInputElement>) => {
     props.history.push(`/paper/${(newPage + 1).toString()}/${newRowsPerPage.toString()}`);
@@ -78,9 +57,7 @@ export const PaperPage: React.FunctionComponent<PaperPageProps> = (props) => {
 
   return (
     <div>
-      <Backdrop className={classes.backdrop} open={loading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      <PageLoader isOpen={loading} />
       {data && !loading && !error && (
           <>
           <Table stickyHeader={true}>
@@ -107,7 +84,6 @@ export const PaperPage: React.FunctionComponent<PaperPageProps> = (props) => {
                 onChangeRowsPerPage={handleChangeRowsPerPage}
             />
         </>
-
       )}
     </div>
   );
