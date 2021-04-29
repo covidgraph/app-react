@@ -23,7 +23,7 @@ import {
 } from '@material-ui/core'
 import clsx from 'clsx'
 import { useQuery, gql } from '@apollo/client'
-import Title from './Title'
+import {Title} from "./Title/Title";
 
 import {
   Maybe,

@@ -7,7 +7,7 @@ import {
   Paper
 } from '@material-ui/core'
 import { useQuery, gql } from '@apollo/client'
-import Title from './Title'
+import {Title} from "./Title/Title";
 
 import { 
   Gene
@@ -167,7 +167,7 @@ function GeneConnectionsList(props: any) {
           (data.Gene.length > 0 &&
           <Box className={classes.elementList}>
             {data.Gene.map((gene: Gene) => {
-              return <GeneListElement key={gene.sid} gene={gene}></GeneListElement>;
+              return <GeneListElement key={gene.sid} gene={gene} />;
             })}
           </Box>)
           || <p>No results</p>

@@ -12,7 +12,7 @@ import {
   Card
 } from '@material-ui/core'
 import { useQuery, gql } from '@apollo/client'
-import Title from './Title'
+import {Title} from './Title/Title'
 
 import {
   Paper
