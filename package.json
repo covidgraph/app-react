@@ -55,14 +55,12 @@
       "last 1 safari version"
     ]
   },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --write"
-    ]
-  },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "pretty-quick --staged"
     }
+  },
+  "devDependencies": {
+    "pretty-quick": "^3.1.0"
   }
 }
