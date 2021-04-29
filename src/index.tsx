@@ -1,25 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import { App } from './App';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
-import { ApolloProvider } from '@apollo/client';
-import {createMuiTheme, CssBaseline, ThemeProvider} from '@material-ui/core';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import { App } from "./App";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
+import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core";
 
-const uri = process.env.REACT_APP_GRAPHQL_URI || 'http://localhost:4001/graphql'
+const uri =
+  process.env.REACT_APP_GRAPHQL_URI || "http://localhost:4001/graphql";
 const cache = new InMemoryCache();
 
 const client = new ApolloClient({
   uri,
-  cache
-})
+  cache,
+});
 
 const theme = createMuiTheme({
   typography: {
     h4: {
-      fontSize: "1.2rem"
-    }
-  }
+      fontSize: "1.2rem",
+    },
+  },
 });
 
 ReactDOM.render(
@@ -29,7 +30,7 @@ ReactDOM.render(
       <App />
     </ThemeProvider>
   </ApolloProvider>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
