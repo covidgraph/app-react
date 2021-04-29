@@ -17,7 +17,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import BookmarksIcon from '@material-ui/icons/Bookmarks';
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { Link as RouterLink } from 'react-router-dom';
-import PaperList from './components/PaperList'
+import { PaperPage } from "./pages/PaperPage/PaperPage";
 
 const drawerWidth = 240;
 
@@ -162,7 +162,7 @@ export const App:React.FunctionComponent = () => {
             <main className={classes.content}>
                 <div className={classes.toolbar}/>
                     <Switch>
-                        <Route exact path="/" component={PaperList} />
+                        <Route exact path="/" component={PaperPage} />
                         {/*<Route exact path="/genes" component={GeneListElement} />*/}
                         {/*<Route exact path="/patents" component={PatentList} />*/}
                     </Switch>

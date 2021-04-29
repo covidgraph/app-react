@@ -1,7 +1,7 @@
 import { Title } from "./Title/Title";
-import { Header } from "./Header/Header";
+import SearchField from "./SearchField/SearchField";
 
 export {
     Title,
-    Header
+    SearchField
 }

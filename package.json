@@ -4,16 +4,14 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.1.2",
+    "@graphql-codegen/cli": "1.19.4",
+    "@graphql-codegen/introspection": "1.18.1",
+    "@graphql-codegen/typescript": "1.19.0",
+    "@graphql-codegen/typescript-operations": "1.17.12",
+    "@graphql-codegen/typescript-react-apollo": "2.2.1",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
-    "recharts": "^1.8.5",
-    "typescript": "^4.1.2",
-    "web-vitals": "^1.0.1",
-    "@graphql-codegen/cli": "1.19.4",
+    "@material-ui/lab": "^4.0.0-alpha.58",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -24,10 +22,16 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/recharts": "^1.8.14",
     "graphql": "^15.4.0",
-    "@graphql-codegen/typescript": "1.19.0",
-    "@graphql-codegen/typescript-react-apollo": "2.2.1",
-    "@graphql-codegen/typescript-operations": "1.17.12",
-    "@graphql-codegen/introspection": "1.18.1"
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.2.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "recharts": "^1.8.5",
+    "typescript": "^4.1.2",
+    "web-vitals": "^1.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -50,5 +54,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }

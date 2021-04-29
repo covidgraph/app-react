@@ -10,12 +10,12 @@ const styles = (theme: Theme) =>
     }
   })
 
-interface Props extends WithStyles<typeof styles> {
+interface SearchFieldProps extends WithStyles<typeof styles> {
   value: String,
   onChange: (event: any) => void
 }
 
-const SearchField = (props: Props) => <TextField
+const SearchField = (props: SearchFieldProps) => <TextField
   id="search"
   label="Search"
   className={props.classes.root}

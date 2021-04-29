@@ -17,7 +17,7 @@ import {Title} from './Title/Title'
 import {
   Paper
 } from '../generated/graphql'
-import SearchField from './SearchField'
+import SearchField from './SearchField/SearchField'
 import { getPageValue, getRowsPerPageValue } from '../util/PaginationParams'
 
 const styles = (theme: Theme) =>
