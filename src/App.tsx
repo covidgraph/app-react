@@ -147,7 +147,7 @@ export const App: React.FunctionComponent = () => {
           </div>
           <Divider />
           <List>
-            <ListItem button component={RouterLink} to={"/"}>
+            <ListItem button component={RouterLink} to={"/paper"}>
               <ListItemIcon>
                 <BookmarksIcon />
               </ListItemIcon>
@@ -171,7 +171,7 @@ export const App: React.FunctionComponent = () => {
         <main className={classes.content}>
           <div className={classes.toolbar} />
           <Switch>
-            <Route exact path="/" component={PaperPage} />
+            <Route path="/paper/:page?/:rowsPerPage?" component={PaperPage} />
             {/*<Route exact path="/genes" component={GeneListElement} />*/}
             {/*<Route exact path="/patents" component={PatentList} />*/}
           </Switch>

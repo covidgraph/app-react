@@ -164,9 +164,7 @@ function GeneConnectionsList(props: any) {
           !error &&
           ((data.Gene.length > 0 && (
             <Box className={classes.elementList}>
-              {data.Gene.map((gene: Gene) => {
-                return <GeneListElement key={gene.sid} gene={gene} />;
-              })}
+              {data.Gene.map((gene: Gene) => (<GeneListElement key={gene.sid} gene={gene} />))}
             </Box>
           )) || <p>No results</p>)}
       </div>
