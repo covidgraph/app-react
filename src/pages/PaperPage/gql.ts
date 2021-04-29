@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const GET_PAPER = gql`
+export const getPapers = gql`
   query paperPaginateQuery(
     $first: Int
     $offset: Int
