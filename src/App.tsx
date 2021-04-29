@@ -1,232 +1,173 @@
-import React from 'react'
-
+import React, { useState } from 'react';
+import clsx from 'clsx';
+import {createStyles, makeStyles, useTheme, Theme} from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import List from '@material-ui/core/List';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import BookmarksIcon from '@material-ui/icons/Bookmarks';
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-
-import PatentList from './components/PatentList'
-import GeneConnectionsList from './components/GeneConnectionsList'
+import { Link as RouterLink } from 'react-router-dom';
 import PaperList from './components/PaperList'
 
-import clsx from 'clsx'
-import { makeStyles } from '@material-ui/core/styles'
-import {
-  CssBaseline,
-  Drawer,
-  AppBar,
-  Toolbar,
-  List,
-  Typography,
-  Divider,
-  IconButton,
-  Container,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-} from '@material-ui/core'
-import { Link } from 'react-router-dom'
-import {
-  ChevronLeft as ChevronLeftIcon,
-  Menu as MenuIcon,
-  FindInPage as FindInPageIcon
-} from '@material-ui/icons'
+const drawerWidth = 240;
 
-const drawerWidth = 240
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            display: 'flex',
+        },
+        appBar: {
+            zIndex: theme.zIndex.drawer + 1,
+            transition: theme.transitions.create(['width', 'margin'], {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen,
+            }),
+        },
+        appBarShift: {
+            marginLeft: drawerWidth,
+            width: `calc(100% - ${drawerWidth}px)`,
+            transition: theme.transitions.create(['width', 'margin'], {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+            }),
+        },
+        menuButton: {
+            marginRight: 36,
+        },
+        hide: {
+            display: 'none',
+        },
+        drawer: {
+            width: drawerWidth,
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+        },
+        drawerOpen: {
+            width: drawerWidth,
+            transition: theme.transitions.create('width', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+            }),
+        },
+        drawerClose: {
+            transition: theme.transitions.create('width', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen,
+            }),
+            overflowX: 'hidden',
+            width: theme.spacing(7) + 1,
+            [theme.breakpoints.up('sm')]: {
+                width: theme.spacing(9) + 1,
+            },
+        },
+        toolbar: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            padding: theme.spacing(0, 1),
+            // necessary for content to be below app bar
+            ...theme.mixins.toolbar,
+        },
+        content: {
+            flexGrow: 1,
+            padding: theme.spacing(3),
+        },
+    }),
+);
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-  },
-  toolbar: {
-    height: '75px',
-    paddingRight: 24, // keep right padding when drawer closed
-  },
-  toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  title: {
-    flexGrow: 1,
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
-    },
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
-    overflowY: 'hidden',
-  },
-  container: {
-    // paddingTop: theme.spacing(4),
-    // paddingBottom: theme.spacing(4),
-    overflowY: 'hidden',
-    height: '100vh',
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
-  navLink: {
-    textDecoration: 'none',
-    color: 'inherit',
-  },
-  appBarImage: {
-    maxHeight: '75px',
-    paddingRight: '20px',
-  },
-}))
+export const App:React.FunctionComponent = () => {
+    const classes = useStyles();
+    const theme = useTheme();
+    const [open, setOpen] = useState<Boolean>(false);
+    const handleDrawerOpen = () => setOpen(true);
+    const handleDrawerClose = () => setOpen(false);
 
-export default function App() {
-  const widthMobile = window.innerWidth < 601 ? false : true
-  const classes = useStyles()
-  const [open, setOpen] = React.useState(widthMobile)
-  const handleDrawerOpen = () => {
-    setOpen(true)
-  }
-  const handleDrawerClose = () => {
-    setOpen(false)
-  }
-
-  return (
-    <Router>
-      <div className={classes.root}>
-        <CssBaseline />
-        <AppBar
-          position="absolute"
-          className={clsx(classes.appBar, open && classes.appBarShift)}
-        >
-          <Toolbar className={classes.toolbar}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              className={clsx(
-                classes.menuButton,
-                open && classes.menuButtonHidden
-              )}
+    return (
+        <div className={classes.root}>
+            <Router>
+            <AppBar
+                position="fixed"
+                className={clsx(classes.appBar, {
+                    [classes.appBarShift]: open,
+                })}
             >
-              <MenuIcon />
-            </IconButton>
-            <img
-              className={classes.appBarImage}
-              src="img/grandstack.png"
-              alt="GRANDstack logo"
-            />
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              className={classes.title}
+                <Toolbar>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={handleDrawerOpen}
+                        edge="start"
+                        className={clsx(classes.menuButton, {
+                            [classes.hide]: open,
+                        })}
+                    >
+                        <MenuIcon/>
+                    </IconButton>
+                    <Typography variant="h6" noWrap>
+                        Covid Graph React Client
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <Drawer
+                variant="permanent"
+                className={clsx(classes.drawer, {
+                    [classes.drawerOpen]: open,
+                    [classes.drawerClose]: !open,
+                })}
+                classes={{
+                    paper: clsx({
+                        [classes.drawerOpen]: open,
+                        [classes.drawerClose]: !open,
+                    }),
+                }}
             >
-              Covid Graph React Client
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-          }}
-          open={open}
-        >
-          <div className={classes.toolbarIcon}>
-            <IconButton onClick={handleDrawerClose}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </div>
-          <Divider />
-          <List>
-            <Link to="/" className={classes.navLink}>
-              <ListItem button>
-                <ListItemIcon>
-                  <FindInPageIcon />
-                </ListItemIcon>
-                <ListItemText primary="Papers" />
-              </ListItem>
-            </Link>
-
-            <Link to="/patents" className={classes.navLink}>
-              <ListItem button>
-                <ListItemIcon>
-                  <FindInPageIcon />
-                </ListItemIcon>
-                <ListItemText primary="Patents" />
-              </ListItem>
-            </Link>
-
-            <Link to="/genes" className={classes.navLink}>
-              <ListItem button>
-                <ListItemIcon>
-                  <FindInPageIcon />
-                </ListItemIcon>
-                <ListItemText primary="Genes" />
-              </ListItem>
-            </Link>
-
-            
-          </List>
-          <Divider />
-        </Drawer>
-        <main className={classes.content}>
-          <div className={classes.appBarSpacer} />
-          <Container maxWidth={false} disableGutters={true} className={classes.container}>
-            <Switch>
-              <Route exact path="/" component={PaperList} />
-              <Route exact path="/genes" component={GeneConnectionsList} />
-              <Route exact path="/patents" component={PatentList} />  
-              {/* <Route exact path="/genes-old" component={GeneList} /> */}
-            </Switch>
-          </Container>
-        </main>
-      </div>
-    </Router>
-  )
+                <div className={classes.toolbar}>
+                    <IconButton onClick={handleDrawerClose}>
+                        {theme.direction === 'rtl' ? <ChevronRightIcon/> : <ChevronLeftIcon/>}
+                    </IconButton>
+                </div>
+                <Divider/>
+                <List>
+                    <ListItem button component={RouterLink} to={"/"}>
+                        <ListItemIcon>
+                            <BookmarksIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Papers"/>
+                    </ListItem>
+                    {/*<ListItem button component={RouterLink} to={"/genes"}>*/}
+                    {/*    <ListItemIcon>*/}
+                    {/*        <VpnKeyIcon />*/}
+                    {/*    </ListItemIcon>*/}
+                    {/*    <ListItemText primary="Genes"/>*/}
+                    {/*</ListItem>*/}
+                    {/*<ListItem button component={RouterLink} to={"/patents"}>*/}
+                    {/*    <ListItemIcon>*/}
+                    {/*        <BookmarksIcon />*/}
+                    {/*    </ListItemIcon>*/}
+                    {/*    <ListItemText primary="patents"/>*/}
+                    {/*</ListItem>*/}
+                </List>
+                <Divider/>
+            </Drawer>
+            <main className={classes.content}>
+                <div className={classes.toolbar}/>
+                    <Switch>
+                        <Route exact path="/" component={PaperList} />
+                        {/*<Route exact path="/genes" component={GeneListElement} />*/}
+                        {/*<Route exact path="/patents" component={PatentList} />*/}
+                    </Switch>
+            </main>
+            </Router>
+        </div>
+    );
 }
