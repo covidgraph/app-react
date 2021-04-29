@@ -13,7 +13,7 @@ import { useQuery } from "@apollo/client";
 import { Paper } from "../../generated/graphql";
 import { getPapers } from "./gql";
 import { ROWS_PER_PAGE_OPTIONS } from "./constants";
-import { PageLoader } from "../../components";
+import { PageLoader, Title } from "../../components";
 
 interface PaperPageProps extends RouteComponentProps<any> {}
 
@@ -69,6 +69,7 @@ export const PaperPage: React.FunctionComponent<PaperPageProps> = (props) => {
       <PageLoader isOpen={loading} />
       {data && !loading && !error && (
         <>
+          <Title>Paper List</Title>
           <Table stickyHeader={true}>
             <TableHead>
               <TableRow>
