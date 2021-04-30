@@ -19,12 +19,14 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import DescriptionIcon from '@material-ui/icons/Description';
 import BookmarksIcon from "@material-ui/icons/Bookmarks";
+import BallotIcon from '@material-ui/icons/Ballot';
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 import { PaperPage } from "./pages/PaperPage/PaperPage";
 import { GenePage } from "./pages/GenePage/GenePage";
-import PatentList from "./components/PatentList";
+import { PatentPage } from "./pages/PatentPage/PatentPage";
 
 const drawerWidth = 240;
 
@@ -151,7 +153,7 @@ export const App: React.FunctionComponent = () => {
           <List>
             <ListItem button component={RouterLink} to={"/paper"}>
               <ListItemIcon>
-                <BookmarksIcon />
+                <DescriptionIcon />
               </ListItemIcon>
               <ListItemText primary="Papers" />
             </ListItem>
@@ -163,7 +165,7 @@ export const App: React.FunctionComponent = () => {
             </ListItem>
             <ListItem button component={RouterLink} to={"/patents"}>
                 <ListItemIcon>
-                    <BookmarksIcon />
+                    <BallotIcon />
                 </ListItemIcon>
                 <ListItemText primary="patents"/>
             </ListItem>
@@ -179,7 +181,7 @@ export const App: React.FunctionComponent = () => {
               path="/genes/:page?/:rowsPerPage?"
               component={GenePage}
             />
-            <Route exact path="/patents" component={PatentList} />
+            <Route exact path="/patents/:page?/:rowsPerPage?" component={PatentPage} />
           </Switch>
         </main>
       </Router>
