@@ -31,8 +31,8 @@ export const PaperPage: React.FunctionComponent<PaperPageProps> = (props) => {
 
   const { loading, data, error } = useQuery(getPapers, {
     variables: {
-      first: rowsPerPage as number,
-      offset: (page as number) * (rowsPerPage as number),
+      first: rowsPerPage,
+      offset: page * rowsPerPage,
       orderBy: orderBy + "_" + order,
       filter: () => {
         return {};
