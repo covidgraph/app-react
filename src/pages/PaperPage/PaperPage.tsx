@@ -22,12 +22,17 @@ export const PaperPage: React.FunctionComponent<PaperPageProps> = (props) => {
   const [order] = useState<"asc" | "desc">("asc");
   const [orderBy] = useState("_hash_id");
 
-  const {page, rowsPerPage, handleChangePage, handleChangeRowsPerPage} = usePagination({
+  const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+  } = usePagination({
     initPage: props.match.params.page,
     initRowsPerPage: props.match.params.rowsPerPage,
     history: props.history,
-    baseUrl: '/paper'
-  })
+    baseUrl: "/paper",
+  });
 
   const { loading, data, error } = useQuery(getPapers, {
     variables: {

@@ -8,7 +8,7 @@ import { getGenes } from "./gql";
 import { ROWS_PER_PAGE_OPTIONS } from "./constants";
 import Alert from "@material-ui/lab/Alert";
 import { RouteComponentProps } from "react-router-dom";
-import {usePagination} from "../../hooks/usePagination";
+import { usePagination } from "../../hooks/usePagination";
 
 interface GenePageProps extends RouteComponentProps<any> {}
 
@@ -19,12 +19,17 @@ export const GenePage: React.FunctionComponent<GenePageProps> = (props) => {
     searchTermFilter: "",
   });
 
-  const {page, rowsPerPage, handleChangePage, handleChangeRowsPerPage} = usePagination({
+  const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+  } = usePagination({
     initPage: props.match.params.page,
     initRowsPerPage: props.match.params.rowsPerPage,
     history: props.history,
-    baseUrl: '/gene'
-  })
+    baseUrl: "/gene",
+  });
 
   const getFilter = () => {
     if (filterState.searchTermFilter.length > 0) {

@@ -19,9 +19,9 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import DescriptionIcon from '@material-ui/icons/Description';
+import DescriptionIcon from "@material-ui/icons/Description";
 import BookmarksIcon from "@material-ui/icons/Bookmarks";
-import BallotIcon from '@material-ui/icons/Ballot';
+import BallotIcon from "@material-ui/icons/Ballot";
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 import { PaperPage } from "./pages/PaperPage/PaperPage";
@@ -164,10 +164,10 @@ export const App: React.FunctionComponent = () => {
               <ListItemText primary="Genes" />
             </ListItem>
             <ListItem button component={RouterLink} to={"/patents"}>
-                <ListItemIcon>
-                    <BallotIcon />
-                </ListItemIcon>
-                <ListItemText primary="patents"/>
+              <ListItemIcon>
+                <BallotIcon />
+              </ListItemIcon>
+              <ListItemText primary="patents" />
             </ListItem>
           </List>
           <Divider />
@@ -181,7 +181,11 @@ export const App: React.FunctionComponent = () => {
               path="/genes/:page?/:rowsPerPage?"
               component={GenePage}
             />
-            <Route exact path="/patents/:page?/:rowsPerPage?" component={PatentPage} />
+            <Route
+              exact
+              path="/patents/:page?/:rowsPerPage?"
+              component={PatentPage}
+            />
           </Switch>
         </main>
       </Router>
