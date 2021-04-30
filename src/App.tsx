@@ -24,6 +24,7 @@ import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 import { PaperPage } from "./pages/PaperPage/PaperPage";
 import { GenePage } from "./pages/GenePage/GenePage";
+import PatentList from "./components/PatentList";
 
 const drawerWidth = 240;
 
@@ -160,12 +161,12 @@ export const App: React.FunctionComponent = () => {
               </ListItemIcon>
               <ListItemText primary="Genes" />
             </ListItem>
-            {/*<ListItem button component={RouterLink} to={"/patents"}>*/}
-            {/*    <ListItemIcon>*/}
-            {/*        <BookmarksIcon />*/}
-            {/*    </ListItemIcon>*/}
-            {/*    <ListItemText primary="patents"/>*/}
-            {/*</ListItem>*/}
+            <ListItem button component={RouterLink} to={"/patents"}>
+                <ListItemIcon>
+                    <BookmarksIcon />
+                </ListItemIcon>
+                <ListItemText primary="patents"/>
+            </ListItem>
           </List>
           <Divider />
         </Drawer>
@@ -178,7 +179,7 @@ export const App: React.FunctionComponent = () => {
               path="/genes/:page?/:rowsPerPage?"
               component={GenePage}
             />
-            {/*<Route exact path="/patents" component={PatentList} />*/}
+            <Route exact path="/patents" component={PatentList} />
           </Switch>
         </main>
       </Router>
