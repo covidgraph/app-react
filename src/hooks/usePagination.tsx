@@ -4,7 +4,7 @@ type usePaginationReturnType = {
     page: number,
     rowsPerPage: number,
     handleChangePage:(event: MouseEvent<HTMLButtonElement> | null, newPage: number) => void;
-    handleChangeRowsPerPage: any;
+    handleChangeRowsPerPage: any; // @todo - Can not get signature to match. leaving any for now.
 }
 
 interface usePaginationProps {
