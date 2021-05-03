@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, MouseEvent } from "react";
+import { ChangeEvent, useState, MouseEvent } from "react";
 
 type usePaginationReturnType = {
   page: number;

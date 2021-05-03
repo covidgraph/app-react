@@ -1,6 +1,5 @@
-import React from "react";
+import React, { StrictMode } from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
 import { App } from "./App";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client";
@@ -24,12 +23,14 @@ const theme = createMuiTheme({
 });
 
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <App />
-    </ThemeProvider>
-  </ApolloProvider>,
+  <StrictMode>
+    <ApolloProvider client={client}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App />
+      </ThemeProvider>
+    </ApolloProvider>
+  </StrictMode>,
   document.getElementById("root")
 );
 

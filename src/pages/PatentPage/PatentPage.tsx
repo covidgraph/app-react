@@ -8,7 +8,6 @@ import {
   TableHead,
   TableRow,
   TablePagination,
-  Paper,
   Card,
   CardContent,
   Divider,
@@ -18,8 +17,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  useMediaQuery,
-  useTheme,
 } from "@material-ui/core";
 import clsx from "clsx";
 import { useQuery } from "@apollo/client";
@@ -34,8 +31,9 @@ import {
   _FromPatentTitleGeneSymbols,
 } from "../../generated/graphql";
 
-import { Title, SearchField } from "../../components";
+import { Title } from "../../components";
 import { RouteComponentProps } from "react-router-dom";
+import { usePagination } from "../../hooks/usePagination";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,20 +84,27 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
   const [order] = useState<"asc" | "desc">("asc");
   const [orderBy] = useState("lens_id");
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
   const [filterState, setFilterState] = useState({
     searchTermFilter: "",
   });
+
+  const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+  } = usePagination({
+    initPage: props.match.params.page,
+    initRowsPerPage: props.match.params.rowsPerPage,
+    history: props.history,
+    baseUrl: "/patents",
+  });
+
   const [currentDisplayInfo, setCurrentDisplayInfo] = useState("");
   const [open, setOpen] = useState(true);
-  const [urlQueryParams] = useState(
-    new URLSearchParams(window.location.search)
-  );
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const classes = useStyles(theme);
+  // const theme = useTheme();
+  // const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const classes = useStyles();
 
   const getFilter = () => {
     if (filterState.searchTermFilter.length > 0) {
@@ -140,41 +145,6 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
     },
   });
 
-  const setUrLQueryParams = (newPage: any, newRowsPerPage: any) => {
-    urlQueryParams.set("page", (newPage + 1).toString());
-    urlQueryParams.set("rowsPerPage", newRowsPerPage.toString());
-    props.history.push(
-      window.location.pathname + "?" + urlQueryParams.toString()
-    );
-  };
-
-  const handleFilterChange = (filterName: any) => (event: any) => {
-    const val = event.target.value;
-    setPage(0);
-    setUrLQueryParams(0, rowsPerPage);
-    resetMoreInformation();
-
-    setFilterState((oldFilterState) => ({
-      ...oldFilterState,
-      [filterName]: val,
-    }));
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-    setUrLQueryParams(newPage, rowsPerPage);
-    resetMoreInformation();
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-    setUrLQueryParams(0, event.target.value);
-    resetMoreInformation();
-  };
-
   const handleClick = (patent: Patent) => {
     if (!currentDisplayInfo) {
       setCurrentDisplayInfo(patent.lens_id);
@@ -209,8 +179,8 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
   const moreInformationFullScreen = (patentId: any) => {
     return (
       <Dialog
-        fullScreen={fullScreen}
-        open={!open && fullScreen}
+        fullScreen={true}
+        open={!open}
         onClose={handleClick}
         aria-labelledby="responsive-dialog-title"
       >
@@ -293,12 +263,12 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
   };
 
   return (
-    <Paper className={classes.root}>
+    <div>
       <Title>Patent List</Title>
-      <SearchField
-        value={filterState.searchTermFilter}
-        onChange={handleFilterChange("searchTermFilter")}
-      />
+      {/*<SearchField*/}
+      {/*  value={filterState.searchTermFilter}*/}
+      {/*  onChange={handleFilterChange("searchTermFilter")}*/}
+      {/*/>*/}
       <div className={classes.container}>
         {loading && !error && <p>Loading...</p>}
         {error && !loading && <p>Error</p>}
@@ -307,10 +277,7 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
             className={clsx(classes.table, open && classes.tableOpen)}
             component={Card}
           >
-            <Table
-              stickyHeader={true}
-              style={{ tableLayout: "auto", whiteSpace: "nowrap" }}
-            >
+            <Table stickyHeader={true}>
               <TableHead>
                 <TableRow>
                   <TableCell>Gene Symbols</TableCell>
@@ -367,8 +334,8 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
           </TableContainer>
         )}
 
-        {!open && !fullScreen && moreInformation(currentDisplayInfo)}
-        {!open && fullScreen && moreInformationFullScreen(currentDisplayInfo)}
+        {!open && moreInformation(currentDisplayInfo)}
+        {!open && moreInformationFullScreen(currentDisplayInfo)}
       </div>
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
@@ -379,6 +346,6 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
-    </Paper>
+    </div>
   );
 };

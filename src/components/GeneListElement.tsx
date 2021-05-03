@@ -124,7 +124,7 @@ function GeneListElement(props: Props) {
                   key={transcripts?.transcript?.sid}
                   label={transcripts?.transcript?.sid}
                   className={
-                    hoveredTranscript?.sid == transcripts?.transcript?.sid
+                    hoveredTranscript?.sid === transcripts?.transcript?.sid
                       ? classes.chipFocused
                       : ""
                   }

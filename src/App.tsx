@@ -176,13 +176,8 @@ export const App: React.FunctionComponent = () => {
           <div className={classes.toolbar} />
           <Switch>
             <Route path="/paper/:page?/:rowsPerPage?" component={PaperPage} />
+            <Route path="/genes/:page?/:rowsPerPage?" component={GenePage} />
             <Route
-              exact
-              path="/genes/:page?/:rowsPerPage?"
-              component={GenePage}
-            />
-            <Route
-              exact
               path="/patents/:page?/:rowsPerPage?"
               component={PatentPage}
             />
