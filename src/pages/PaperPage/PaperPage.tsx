@@ -49,8 +49,6 @@ export const PaperPage: React.FunctionComponent<PaperPageProps> = (props) => {
     return <Alert severity="error">Error, {error.message}</Alert>;
   }
 
-  console.log(data);
-
   return (
     <div>
       <PageLoader isOpen={loading} />
@@ -85,3 +83,5 @@ export const PaperPage: React.FunctionComponent<PaperPageProps> = (props) => {
     </div>
   );
 };
+
+export default PaperPage;

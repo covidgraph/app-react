@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,  lazy, Suspense } from "react";
 import clsx from "clsx";
 import {
   createStyles,
@@ -24,9 +24,6 @@ import BookmarksIcon from "@material-ui/icons/Bookmarks";
 import BallotIcon from "@material-ui/icons/Ballot";
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
-import { PaperPage } from "./pages/PaperPage/PaperPage";
-import { GenePage } from "./pages/GenePage/GenePage";
-import { PatentPage } from "./pages/PatentPage/PatentPage";
 
 const drawerWidth = 240;
 
@@ -94,6 +91,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+
+// Code Splitting
+const PaperPage = lazy(() => import('./pages/PaperPage/PaperPage'));
+const GenePage = lazy(() => import('./pages/GenePage/GenePage'));
+const PatentPage = lazy(() => import('./pages/PatentPage/PatentPage'));
+
 export const App: React.FunctionComponent = () => {
   const classes = useStyles();
   const theme = useTheme();
@@ -103,6 +106,7 @@ export const App: React.FunctionComponent = () => {
 
   return (
     <div className={classes.root}>
+      <Suspense fallback="Loading">
       <Router>
         <AppBar
           position="fixed"
@@ -184,6 +188,7 @@ export const App: React.FunctionComponent = () => {
           </Switch>
         </main>
       </Router>
+      </Suspense>
     </div>
   );
 };

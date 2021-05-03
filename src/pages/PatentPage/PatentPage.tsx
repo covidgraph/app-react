@@ -349,3 +349,5 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
     </div>
   );
 };
+
+export default PatentPage;

@@ -101,3 +101,5 @@ export const GenePage: React.FunctionComponent<GenePageProps> = (props) => {
     </>
   );
 };
+
+export default GenePage;
