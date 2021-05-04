@@ -12,7 +12,7 @@ import Alert from "@material-ui/lab/Alert";
 import { useQuery } from "@apollo/client";
 import { Paper } from "../../generated/graphql";
 import { getPapers } from "./gql";
-import { ROWS_PER_PAGE_OPTIONS } from "./constants";
+import { ROWS_PER_PAGE_OPTIONS } from "../../constants";
 import { PageLoader, Title } from "../../components";
 import { usePagination } from "../../hooks/usePagination";
 
@@ -49,10 +49,12 @@ export const PaperPage: React.FunctionComponent<PaperPageProps> = (props) => {
     return <Alert severity="error">Error, {error.message}</Alert>;
   }
 
-  return (
-    <div>
-      <PageLoader isOpen={loading} />
-      {data && !loading && !error && (
+  if (loading) {
+    return <PageLoader isOpen={loading} />
+  }
+
+  if (data) {
+    return (
         <>
           <Title>Paper List</Title>
           <Table stickyHeader={true}>
@@ -63,25 +65,26 @@ export const PaperPage: React.FunctionComponent<PaperPageProps> = (props) => {
             </TableHead>
             <TableBody>
               {data.Paper.map((n: Paper) => (
-                <TableRow key={n._hash_id}>
-                  <TableCell>{n.title}</TableCell>
-                </TableRow>
+                  <TableRow key={n._hash_id}>
+                    <TableCell>{n.title}</TableCell>
+                  </TableRow>
               ))}
             </TableBody>
           </Table>
           <TablePagination
-            rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
-            component="div"
-            count={-1}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onChangePage={handleChangePage}
-            onChangeRowsPerPage={handleChangeRowsPerPage}
+              rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
+              component="div"
+              count={-1}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
           />
         </>
-      )}
-    </div>
-  );
+    );
+  }
+
+  return <Alert severity="error">Error</Alert>;
 };
 
 export default PaperPage;

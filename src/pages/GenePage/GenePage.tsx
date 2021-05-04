@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/client";
 import { Title, SearchField, PageLoader } from "../../components";
 import { Gene } from "../../generated/graphql";
 import { getGenes } from "./gql";
-import { ROWS_PER_PAGE_OPTIONS } from "./constants";
+import { ROWS_PER_PAGE_OPTIONS } from "../../constants";
 import Alert from "@material-ui/lab/Alert";
 import { RouteComponentProps } from "react-router-dom";
 import { usePagination } from "../../hooks/usePagination";
@@ -69,9 +69,14 @@ export const GenePage: React.FunctionComponent<GenePageProps> = (props) => {
     return <Alert severity="error">Error, {error.message}</Alert>;
   }
 
+  if (loading) {
+    return <PageLoader isOpen={loading} />;
+  }
+
+  console.log(loading, data);
+
   return (
     <>
-      <PageLoader isOpen={loading} />
       <Title>Gene List</Title>
       <SearchField
         value={filterState.searchTermFilter}

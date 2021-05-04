@@ -88,6 +88,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       padding: theme.spacing(3),
     },
+    ListItemGutters: {
+            paddingLeft: theme.spacing(3)
+    }
   })
 );
 
@@ -155,19 +158,25 @@ export const App: React.FunctionComponent = () => {
           </div>
           <Divider />
           <List>
-            <ListItem button component={RouterLink} to={"/paper"}>
+            <ListItem button component={RouterLink} to={"/paper"} classes={{
+                gutters: classes.ListItemGutters
+            }}>
               <ListItemIcon>
                 <DescriptionIcon />
               </ListItemIcon>
               <ListItemText primary="Papers" />
             </ListItem>
-            <ListItem button component={RouterLink} to={"/genes"}>
+            <ListItem button component={RouterLink} to={"/genes"} classes={{
+                gutters: classes.ListItemGutters
+            }}>
               <ListItemIcon>
                 <BookmarksIcon />
               </ListItemIcon>
               <ListItemText primary="Genes" />
             </ListItem>
-            <ListItem button component={RouterLink} to={"/patents"}>
+            <ListItem button component={RouterLink} to={"/patents"} classes={{
+                gutters: classes.ListItemGutters
+            }}>
               <ListItemIcon>
                 <BallotIcon />
               </ListItemIcon>
