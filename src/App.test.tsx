@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import { App } from "./App";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const uri = process.env.REACT_APP_GRAPHQL_URI || "/graphql";
