@@ -11,8 +11,8 @@ import {
 import Alert from "@material-ui/lab/Alert";
 import { useQuery } from "@apollo/client";
 import { Paper } from "../../generated/graphql";
-import { getPapers } from "./gql";
-import { ROWS_PER_PAGE_OPTIONS } from "./constants";
+import { getPapers } from "../../gql";
+import { ROWS_PER_PAGE_OPTIONS } from "../../constants";
 import { PageLoader, Title } from "../../components";
 import { usePagination } from "../../hooks/usePagination";
 

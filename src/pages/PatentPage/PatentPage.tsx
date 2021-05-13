@@ -20,7 +20,7 @@ import {
 } from "@material-ui/core";
 import clsx from "clsx";
 import { useQuery } from "@apollo/client";
-import { getPatent } from "./gql";
+import { getPatent } from "../../gql";
 
 import {
   Maybe,
