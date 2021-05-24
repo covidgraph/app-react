@@ -75,12 +75,11 @@ export const GenePage: React.FunctionComponent<GenePageProps> = (props) => {
 
   return (
     <>
-      <PageLoader isOpen={loading} />
       <Title>Gene List</Title>
-      <SearchField
-        value={filterState.searchTermFilter}
-        onChange={handleFilterChange("searchTermFilter")}
-      />
+      {/*<SearchField*/}
+      {/*  value={filterState.searchTermFilter}*/}
+      {/*  onChange={handleFilterChange("searchTermFilter")}*/}
+      {/*/>*/}
       <div>
         {data &&
           !loading &&

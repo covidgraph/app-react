@@ -34,6 +34,7 @@ import {
 import { Title } from "../../components";
 import { RouteComponentProps } from "react-router-dom";
 import { usePagination } from "../../hooks/usePagination";
+import {ROWS_PER_PAGE_OPTIONS} from "../../constants";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -102,8 +103,6 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
 
   const [currentDisplayInfo, setCurrentDisplayInfo] = useState("");
   const [open, setOpen] = useState(true);
-  // const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = useStyles();
 
   const getFilter = () => {
@@ -262,6 +261,8 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
     return Array.from(geneSymbols.values());
   };
 
+  console.log(rowsPerPage);
+
   return (
     <div>
       <Title>Patent List</Title>
@@ -338,7 +339,7 @@ export const PatentPage: React.FunctionComponent<PatentPageProps> = (props) => {
         {!open && moreInformationFullScreen(currentDisplayInfo)}
       </div>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
         component="div"
         count={-1}
         rowsPerPage={rowsPerPage}

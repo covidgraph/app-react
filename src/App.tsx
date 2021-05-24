@@ -24,6 +24,7 @@ import BookmarksIcon from "@material-ui/icons/Bookmarks";
 import BallotIcon from "@material-ui/icons/Ballot";
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
+import {PageLoader} from "./components";
 
 const drawerWidth = 240;
 
@@ -109,7 +110,7 @@ export const App: React.FunctionComponent = () => {
 
   return (
     <div className={classes.root}>
-      <Suspense fallback="Loading">
+      <Suspense fallback={<PageLoader isOpen={true}/>}>
       <Router>
         <AppBar
           position="fixed"
