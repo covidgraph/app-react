@@ -17,13 +17,22 @@ interface usePaginationProps {
     baseUrl: string;
 }
 
-export const usePagination = (
-    props: usePaginationProps
-): usePaginationReturnType => {
-    const {initPage, initRowsPerPage, history, baseUrl} = props;
+/**
+ *
+ * @param initPage
+ * @param initRowsPerPage
+ * @param history
+ * @param baseUrl
+ */
+export const usePagination = ({initPage, initRowsPerPage, history, baseUrl}:usePaginationProps): usePaginationReturnType => {
     const [page, setPage] = useState<number>(initPage | 0);
     const [rowsPerPage, setRowsPerPage] = useState<number>(initRowsPerPage | 25);
 
+    /**
+     *
+     * @param newPage
+     * @param newRowsPerPage
+     */
     const setUrlQueryParams = (
         newPage: number,
         newRowsPerPage: number | ChangeEvent<HTMLInputElement>
@@ -33,6 +42,11 @@ export const usePagination = (
         );
     };
 
+    /**
+     *
+     * @param event
+     * @param newPage
+     */
     const handleChangePage = (
         event: MouseEvent<HTMLButtonElement> | null,
         newPage: number
@@ -41,6 +55,10 @@ export const usePagination = (
         setUrlQueryParams(newPage, rowsPerPage);
     };
 
+    /**
+     *
+     * @param event
+     */
     const handleChangeRowsPerPage = (event: any) => {
         const rowsPerPage = parseInt(event.target.value, 10);
         setRowsPerPage(rowsPerPage);
